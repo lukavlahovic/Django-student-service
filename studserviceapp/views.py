@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 
-def index(request);
+def index(request):
     return HttpResponse("Dobrodosli na studentski servis")
 
