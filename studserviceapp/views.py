@@ -18,7 +18,9 @@ def timetableforuser(request, username):
         g = a.grupe.all()
         for l in g:
             c = c + l.oznaka_grupe+ ' '
-        r = r + a.oznaka_ucionice+' |'+a.pocetak.strftime('%H:%M')+'-'+a.zavrsetak.strftime('%H:%M') + ' |'+ a.dan+' |'+ a.tip_nastave + ' |'+ a.predmet.naziv+' |'+c + ' |'
+        r = r +'<pre>'+ a.oznaka_ucionice+' |'+a.pocetak.strftime('%H:%M')+'-'+a.zavrsetak.strftime('%H:%M') + ' |'+ a.dan+' |'+ a.tip_nastave + ' |'+ a.predmet.naziv+' |'+c + ' |'+'</pre>'
+
+
 
     return HttpResponse(r)
   else:
@@ -33,7 +35,8 @@ def timetableforuser(request, username):
           c = ''
           for l in j:
               c = c + l.oznaka_grupe + ' '
-          r = r + a.oznaka_ucionice + ' |' + a.pocetak.strftime('%H:%M') + '-' + a.zavrsetak.strftime('%H:%M') + ' |' + a.dan + ' |' + a.tip_nastave + ' |' + a.predmet.naziv +' |'+a.nastavnik.ime+' '+a.nastavnik.prezime+ ' |' + c + ' |'
+          r = r +'<pre>'+ a.oznaka_ucionice + ' |' + a.pocetak.strftime('%H:%M') + '-' + a.zavrsetak.strftime('%H:%M') + ' |' + a.dan + ' |' + a.tip_nastave + ' |' + a.predmet.naziv +' |'+a.nastavnik.ime+' '+a.nastavnik.prezime+ ' |' + c + ' |'+'</pre>'
+
 
       return HttpResponse(r)
 
