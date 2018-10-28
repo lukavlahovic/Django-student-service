@@ -13,6 +13,7 @@ class Grupa(models.Model):
     semestar = models.ForeignKey(Semestar, on_delete=models.DO_NOTHING)
 
 
+
 class Nalog(models.Model):
     username = models.CharField(max_length=200)
     lozinka = models.CharField(max_length=100, null=True)  # google login, necemo koristiti password
