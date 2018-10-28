@@ -11,6 +11,8 @@ class Grupa(models.Model):
     oznaka_grupe = models.CharField(max_length=10)
     smer = models.CharField(max_length=20, null=True)
     semestar = models.ForeignKey(Semestar, on_delete=models.DO_NOTHING)
+    def __str__(self):
+        return self.oznaka_grupe
 
 
 
@@ -37,7 +39,8 @@ class Predmet(models.Model):
     semestar_po_programu = models.IntegerField(null=True)  # redni broj semestra u kom se slusa predmet
     fond_predavanja = models.IntegerField(null=True)
     fond_vezbe = models.IntegerField(null=True)
-
+    def __str__(self):
+        return self.naziv
 
 class Nastavnik(models.Model):
     ime = models.CharField(max_length=200)
@@ -46,7 +49,8 @@ class Nastavnik(models.Model):
     zvanje = models.CharField(max_length=40, null=True)
     nalog = models.ForeignKey(Nalog, on_delete = models.CASCADE)
     predmet = models.ManyToManyField(Predmet)
-
+    def __str__(self):
+        return self.ime+' '+self.prezime
 
 
 
@@ -65,7 +69,8 @@ class Termin(models.Model):
     predmet = models.ForeignKey(Predmet, on_delete=models.DO_NOTHING)
     grupe = models.ManyToManyField(Grupa)
     raspored = models.ForeignKey(RasporedNastave, on_delete=models.CASCADE)
-
+    def __str__(self):
+        return self.oznaka_ucionice +' '+ self.pocetak.strftime('%H:%M')+'\n'
 
 
 
