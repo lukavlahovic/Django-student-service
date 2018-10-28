@@ -6,6 +6,9 @@ django.setup()
 from studserviceapp.models import Student, Grupa, Semestar, Nalog
 
 Student.objects.all().delete()
+Grupa.objects.all().delete()
+Semestar.objects.all().delete()
+Nalog.objects.all().delete()
 
 semestar = Semestar(vrsta = 'neparni', skolska_godina_pocetak=2018, skolska_godina_kraj=2019)
 semestar.save()
@@ -28,7 +31,12 @@ s2 = Student(ime='Andrija',prezime='Petrovic',godina_upisa=2017, broj_indeksa=85
 s2.save()
 s2.grupa.add(g303)
 s2.grupa.add(g304)
-print(s2.grupa.all())
+print(s1 in Student.objects.all())
+Student.objects.all().delete()
+Grupa.objects.all().delete()
+Semestar.objects.all().delete()
+Nalog.objects.all().delete()
+
 
 
 
