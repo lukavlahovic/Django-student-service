@@ -1,19 +1,18 @@
 from django.db import models
 
-
 class Semestar(models.Model):
     vrsta = models.CharField(max_length=20)  # parni/neparni
     skolska_godina_pocetak = models.IntegerField()  # primer 2018
     skolska_godina_kraj = models.IntegerField()  # primer 2019
 
+    def __str__(self):
+        return self.vrsta + " "+str(self.skolska_godina_pocetak)+"/"+str(self.skolska_godina_kraj)
 
-class Grupa(models.Model):
+
+class Grupa(models.Model): #
     oznaka_grupe = models.CharField(max_length=10)
     smer = models.CharField(max_length=20, null=True)
     semestar = models.ForeignKey(Semestar, on_delete=models.DO_NOTHING)
-    def __str__(self):
-        return self.oznaka_grupe
-
 
 
 class Nalog(models.Model):
@@ -30,6 +29,7 @@ class Student(models.Model):
     smer = models.CharField(max_length=20)
     nalog = models.ForeignKey(Nalog, on_delete=models.CASCADE)
     grupa = models.ManyToManyField(Grupa)
+
     def __str__(self):
         return self.ime + " " + self.prezime
 
@@ -39,8 +39,10 @@ class Predmet(models.Model):
     semestar_po_programu = models.IntegerField(null=True)  # redni broj semestra u kom se slusa predmet
     fond_predavanja = models.IntegerField(null=True)
     fond_vezbe = models.IntegerField(null=True)
+
     def __str__(self):
         return self.naziv
+
 
 class Nastavnik(models.Model):
     ime = models.CharField(max_length=200)
@@ -49,13 +51,11 @@ class Nastavnik(models.Model):
     zvanje = models.CharField(max_length=40, null=True)
     nalog = models.ForeignKey(Nalog, on_delete = models.CASCADE)
     predmet = models.ManyToManyField(Predmet)
-    def __str__(self):
-        return self.ime+' '+self.prezime
 
 
 
 class RasporedNastave(models.Model):
-    datum_unosa = models.DateTimeField()
+    datum_unosa = models.DateTimeField(null=True)
     semestar = models.ForeignKey(Semestar, on_delete=models.PROTECT)
 
 
@@ -69,8 +69,7 @@ class Termin(models.Model):
     predmet = models.ForeignKey(Predmet, on_delete=models.DO_NOTHING)
     grupe = models.ManyToManyField(Grupa)
     raspored = models.ForeignKey(RasporedNastave, on_delete=models.CASCADE)
-    def __str__(self):
-        return self.oznaka_ucionice +' '+ self.pocetak.strftime('%H:%M')+'\n'
+
 
 
 
@@ -108,7 +107,8 @@ class IzborGrupe(models.Model):
     nacin_placanja = models.CharField(max_length=30)
     nepolozeni_predmeti = models.ManyToManyField(Predmet)
     student = models.ForeignKey(Student,on_delete=models.DO_NOTHING)
-    upisan = models.BooleanField()
+    izabrana_grupa = models.ForeignKey(IzbornaGrupa,on_delete=models.CASCADE)
+    upisan = models.BooleanField()  # na pocetku staviti false
 
 
 class VazniDatumi(models.Model):
