@@ -7,7 +7,7 @@ from studserviceapp.models import Student, Grupa, Semestar, Nalog
 
 
 
-a = 1
+
 
 n1 = Nalog(username='l_jelic17', lozinka='57788249', uloga='student')
 n1.save()
