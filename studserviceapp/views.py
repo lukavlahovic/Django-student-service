@@ -71,3 +71,34 @@ def save_obavestenje(request):
     obavestenje = Obavestenje(tekst=tekst,postavio=postavio,datum_postavljanja=datetime.datetime.now())
     obavestenje.save()
     return HttpResponse('<h1>Obavestenje sačuvano</h1>')
+
+def izborna_grupa_form(request):
+
+    qs = Predmet.objects.all()
+    context = { 'predmeti' : qs}
+    return render(request, 'studserviceapp/izbornaGrupa.html', context)
+
+def saveizbornagrupa(request):
+
+    vrsta = request.POST['vrsta']
+
+    skolska_godina_pocetak = request.POST['skolska_godina_pocetak']
+
+    skolska_godina_kraj = request.POST['skolska_godina_kraj']
+
+    oznaka_semestra = request.POST['oznaka_semestra']
+
+    oznaka_grupe = request.POST['oznaka_grupe']
+
+    kapacitet = request.POST['kapacitet']
+
+    smer = request.POST['smer']
+
+    aktivna = request.POST.get('aktivna',False)
+
+    predmeti = request.POST.getlist("predmeti")
+
+    if Semestar.objects.get(vrsta=vrsta, skolska_godina_kraj=skolska_godina_kraj,skolska_godina_pocetak=skolska_godina_pocetak)==None:
+        print("nema semestra")
+
+    return izborna_grupa_form(request)

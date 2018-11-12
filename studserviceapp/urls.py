@@ -7,4 +7,6 @@ urlpatterns = [
          path("nastavnici",views.nastavnici_template,name='nastavnici_template') ,
          path('unosobv/<str:user>', views.unos_obavestenja_form, name='unosobavestenja'),
          path("saveobavestenje",views.save_obavestenje,name='saveobavestenje') ,
+         path('izbornagrupa',views.izborna_grupa_form,name='izbornagrupa') ,
+         path("saveizbornagrupa", views.saveizbornagrupa,name='saveizbornagrupa')
 ]
