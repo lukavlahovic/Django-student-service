@@ -4,7 +4,7 @@ from django.shortcuts import render
 import datetime
 
 from studserviceapp.models import Grupa, Nastavnik, Termin, RasporedNastave, Predmet, Nalog, Semestar, Student, \
-    Obavestenje
+    Obavestenje, IzbornaGrupa
 
 
 def index(request):
@@ -98,7 +98,36 @@ def saveizbornagrupa(request):
 
     predmeti = request.POST.getlist("predmeti")
 
-    if Semestar.objects.get(vrsta=vrsta, skolska_godina_kraj=skolska_godina_kraj,skolska_godina_pocetak=skolska_godina_pocetak)==None:
-        print("nema semestra")
+    try:
+        semestar = Semestar.objects.get(vrsta=vrsta, skolska_godina_kraj=skolska_godina_kraj,skolska_godina_pocetak=skolska_godina_pocetak)
+    except Semestar.DoesNotExist:
+        semestar = Semestar(vrsta=vrsta, skolska_godina_kraj=skolska_godina_kraj,skolska_godina_pocetak=skolska_godina_pocetak)
+        semestar.save()
+
+    izbornaGrupa = IzbornaGrupa(oznaka_grupe=oznaka_grupe,kapacitet=kapacitet,oznaka_semestra=oznaka_semestra,smer=smer,aktivna=aktivna,za_semestar=semestar)
+    izbornaGrupa.save()
+    for predmet in predmeti:
+        p = Predmet.objects.get(id=predmet)
+        izbornaGrupa.predmeti.add(p)
+    izbornaGrupa.save()
+
+
 
     return izborna_grupa_form(request)
+
+
+def izmenaIzborneGrupe(request, oznakaGrupe):
+
+    try:
+        g = IzbornaGrupa.objects.get(oznaka_grupe=oznakaGrupe)
+        p = Predmet.objects.all()
+        context = {'grupa':g, 'predmeti':p}
+        return render(request, 'studserviceapp/izmenaIzbornaGrupa.html',
+                          context)
+
+    except Nalog.DoesNotExist:
+        return HttpResponse('Grupa ne postoji')
+
+def sacuvanaIzmenaGrupe(request):
+
+    return HttpResponse("Sacuvana izmena")

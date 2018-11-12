@@ -1,6 +1,5 @@
 import csv
 import time
-import datetime
 import os
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "StudentskiServis.settings")
 import django

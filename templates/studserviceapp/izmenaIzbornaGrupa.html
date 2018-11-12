@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add izborna grupa</title>
+</head>
+<body>
+
+    <form action="{% url 'saveizmenagrupa' %}" method="post">
+        {% csrf_token %}
+
+        <label>Izbor parnosti</label>
+        <select name="vrsta">
+            <option value="parni">parni</option>
+            <option value="neparni">neparni</option>
+        </select><br><br>
+
+        <label>Pocetak semestra</label>
+        <textarea rows="1" cols="10" name="skolska_godina_pocetak">{{ grupa.za_semestar.skolska_godina_pocetak }}</textarea><br><br>
+
+        <label>Kraj semestra</label>
+        <textarea rows="1" cols="10" name="skolska_godina_kraj">{{ grupa.za_semestar.skolska_godina_kraj }}</textarea><br><br>
+
+        <label>Oznaka semestra</label>
+        <textarea rows="1" cols="10" name="oznaka_semestra">{{ grupa.oznaka_semestra }}</textarea><br><br>
+
+        <label>Oznaka grupe</label>
+        <textarea rows="1" cols="10" name="oznaka_grupe">{{ grupa.oznaka_grupe }}</textarea><br><br>
+
+        <label>Kapacitet</label>
+        <textarea rows="1" cols="10" name="kapacitet">{{ grupa.kapacitet }}</textarea><br><br>
+
+        <label>Smer</label>
+        <textarea rows="1" cols="10" name="smer">{{ grupa.smer }}</textarea><br><br>
+        {%  if grupa.aktivna %}
+           <input type="checkbox" name="aktivna" value=True checked > Aktivna<br>
+        {% else %}
+           <input type="checkbox" name="aktivna" value=True> Aktivna<br>
+        {% endif %}
+        <select name="predmeti" multiple>
+        {%  for p in predmeti %}
+           {% if p in grupa.predmeti.all%}
+            <option selected value={{ p.id }} >{{ p }}</option>
+           {% else %}
+             <option value={{ p.id }} >{{ p }}</option>
+            {% endif %}
+        {% endfor %}
+        </select>
+
+        <input type="submit" value="Snimi">
+    </form>
+
+</body>
+</html>
