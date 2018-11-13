@@ -48,13 +48,8 @@
         <input type="radio" name="prvi_put_upisuje_semestar" value=False> NE<br><br>
 
         <select name="izabrana_grupa">
-        {%  for g in izbornagrupa %}
-           {% if g.smer == student.smer%}
-               {% if g.aktivna == 'True'%}
-                         <option selected value={{ p.id }} >{{ p }}</option>
-                {% endif %}
-            {% endif %}
-        {% endfor %}
+
+
         </select>
 
         <input type="submit" value="Snimi">

@@ -4,7 +4,7 @@ from django.shortcuts import render
 import datetime
 
 from studserviceapp.models import Grupa, Nastavnik, Termin, RasporedNastave, Predmet, Nalog, Semestar, Student, \
-    Obavestenje, IzbornaGrupa
+    Obavestenje, IzbornaGrupa, IzborGrupe
 
 
 def index(request):
@@ -171,8 +171,14 @@ def izborGrupe(request, studentUserName):
         n = Nalog.objects.get(username=studentUserName)
         s = Student.objects.get(nalog=n)
         semestar = Semestar.objects.last()
-        izbornagrupa = IzbornaGrupa.objects.all()
-        context = {'student':s, 'semestar':semestar, 'izbornagrupa': izbornagrupa}
+        izbornagrupa = IzbornaGrupa.objects.filter(smer=s.smer,aktivna=True)
+
+        lista = {}
+        for g in izbornagrupa:
+            if IzborGrupe.objects.filter(izabrana_grupa=g).count() < g.kapacitet:
+                lista.add(g)
+
+        context = {'student':s, 'semestar':semestar, 'izbornagrupa': izbornagrupa, 'lista': lista}
         return render(request, 'studserviceapp/izborGrupe.html',
                           context)
 
