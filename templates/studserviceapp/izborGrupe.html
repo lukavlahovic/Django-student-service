@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>izborGrupe</title>
+</head>
+<body>
+    <form action="{% url 'saveizmenagrupa'%}" method="post">
+        {% csrf_token %}
+
+        <textarea cols="1" rows="10" name="grupaID" style="display:none;">{{ grupa.id }}</textarea>
+
+        <label>Indeks</label>
+        <textarea disabled rows="1" cols="10" name="smer">{{ student.smer }}</textarea>
+        <textarea disabled rows="1" cols="10" name="broj_indeksa">{{ student.broj_indeksa }}</textarea>
+        <textarea disabled rows="1" cols="10" name="godina_upisa">{{ student.godina_upisa }}</textarea><br><br>
+
+        <label>Ime</label>
+        <textarea disabled rows="1" cols="10" name="ime">{{ student.ime }}</textarea><br><br>
+
+        <label>Prezime</label>
+        <textarea disabled rows="1" cols="10" name="prezime">{{ student.prezime }}</textarea><br><br>
+
+        <label>Broj do sada ukupno ostvarenih ESPB</label>
+        <textarea rows="1" cols="10" name="ostvarenoESPB"></textarea><br><br>
+
+        <label>Skolse {{ semestar.skolska_godina_pocetak }} / {{ semestar.skolska_godina_kraj }} godine upisujem ESPB</label>
+        <textarea rows="1" cols="10" name="upisujeESPB"></textarea><br><br>
+
+        <label>Broj do sada polozenih ispita</label>
+        <textarea rows="1" cols="10" name="broj_polozenih_ispita"></textarea><br><br>
+
+        <label>Semestar</label>
+         {%  if semestar.vrsta == 'parni' %}
+             <input type="radio" name="upisuje_semestar" value={{ 2 }}> 2
+             <input type="radio" name="upisuje_semestar" value={{ 4 }}> 4
+             <input type="radio" name="upisuje_semestar" value={{ 6 }}> 6
+             <input type="radio" name="upisuje_semestar" value={{ 8 }}> 8<br><br>
+        {% else %}
+             <input type="radio" name="upisuje_semestar" value={{ 1 }}> 1
+             <input type="radio" name="upisuje_semestar" value={{ 3 }}> 3
+             <input type="radio" name="upisuje_semestar" value={{ 5 }}> 5
+             <input type="radio" name="upisuje_semestar" value={{ 7 }}> 7<br><br>
+        {% endif %}
+
+        <label>Prvi put upisuje</label>
+        <input type="radio" name="prvi_put_upisuje_semestar" value=True> DA
+        <input type="radio" name="prvi_put_upisuje_semestar" value=False> NE
+
+        <input type="submit" value="Snimi">
+    </form>
+
+</body>
+</html>

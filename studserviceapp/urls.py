@@ -11,4 +11,5 @@ urlpatterns = [
          path("saveizbornagrupa", views.saveizbornagrupa,name='saveizbornagrupa'),
          path('izmenagrupe/<str:oznakaGrupe>', views.izmenaIzborneGrupe, name='izmenagrupe'),
          path("saveizmenagrupa", views.sacuvanaIzmenaGrupe,name='saveizmenagrupa'),
+         path('izborgrupe/<str:studentUserName>', views.izborGrupe,name='izborgrupe'),
 ]

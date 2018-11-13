@@ -163,3 +163,18 @@ def sacuvanaIzmenaGrupe(request):
 
 
     return HttpResponse("Izmene sacuvane")
+
+
+def izborGrupe(request, studentUserName):
+
+    try:
+        n = Nalog.objects.get(username=studentUserName)
+        s = Student.objects.get(nalog=n)
+        semestar = Semestar.objects.last()
+        izbornagrupa = IzbornaGrupa.objects.all()
+        context = {'student':s, 'semestar':semestar, 'izbornagrupa': izbornagrupa}
+        return render(request, 'studserviceapp/izborGrupe.html',
+                          context)
+
+    except IzbornaGrupa.DoesNotExist:
+        return HttpResponse('Grupa ne postoji')
