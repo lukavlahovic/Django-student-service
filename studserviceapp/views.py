@@ -101,6 +101,7 @@ def saveizbornagrupa(request):
     izbornaGrupa.save()
     for predmet in predmeti:
         p = Predmet.objects.get(id=predmet)
+        p.semestar_po_programu = oznaka_semestra
         izbornaGrupa.predmeti.add(p)
     izbornaGrupa.save()
 
@@ -143,6 +144,7 @@ def sacuvanaIzmenaGrupe(request):
         semestar.save()
 
     izbornaGrupa = IzbornaGrupa.objects.get(id=staraGrupa)
+    izbornaGrupa.za_semestar=semestar
     izbornaGrupa.oznaka_grupe=oznaka_grupe
     izbornaGrupa.oznaka_semestra = oznaka_semestra
     izbornaGrupa.kapacitet = kapacitet
@@ -154,6 +156,7 @@ def sacuvanaIzmenaGrupe(request):
 
     for predmet in predmeti:
         p = Predmet.objects.get(id=predmet)
+        p.semestar_po_programu = oznaka_semestra
         izbornaGrupa.predmeti.add(p)
 
     izbornaGrupa.save()
