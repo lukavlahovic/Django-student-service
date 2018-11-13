@@ -149,7 +149,7 @@ def sacuvanaIzmenaGrupe(request):
     izbornaGrupa.smer = smer
     izbornaGrupa.aktivna = aktivna
 
-    for predmet in izbornaGrupa.predmeti:
+    for predmet in izbornaGrupa.predmeti.all():
         izbornaGrupa.predmeti.remove(predmet)
 
     for predmet in predmeti:
