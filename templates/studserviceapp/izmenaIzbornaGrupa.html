@@ -6,8 +6,10 @@
 </head>
 <body>
 
-    <form action="{% url 'saveizmenagrupa' %}" method="post">
+    <form action="{% url 'saveizmenagrupa'%}" method="post">
         {% csrf_token %}
+
+        <textarea cols="1" rows="10" name="grupaID" style="display:none;">{{ grupa.id }}</textarea>
 
         <label>Izbor parnosti</label>
         <select name="vrsta">

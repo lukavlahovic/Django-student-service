@@ -81,19 +81,12 @@ def izborna_grupa_form(request):
 def saveizbornagrupa(request):
 
     vrsta = request.POST['vrsta']
-
     skolska_godina_pocetak = request.POST['skolska_godina_pocetak']
-
     skolska_godina_kraj = request.POST['skolska_godina_kraj']
-
     oznaka_semestra = request.POST['oznaka_semestra']
-
     oznaka_grupe = request.POST['oznaka_grupe']
-
     kapacitet = request.POST['kapacitet']
-
     smer = request.POST['smer']
-
     aktivna = request.POST.get('aktivna',False)
 
     predmeti = request.POST.getlist("predmeti")
@@ -112,7 +105,6 @@ def saveizbornagrupa(request):
     izbornaGrupa.save()
 
 
-
     return izborna_grupa_form(request)
 
 
@@ -125,9 +117,46 @@ def izmenaIzborneGrupe(request, oznakaGrupe):
         return render(request, 'studserviceapp/izmenaIzbornaGrupa.html',
                           context)
 
-    except Nalog.DoesNotExist:
+    except IzbornaGrupa.DoesNotExist:
         return HttpResponse('Grupa ne postoji')
 
 def sacuvanaIzmenaGrupe(request):
 
-    return HttpResponse("Sacuvana izmena")
+    #izmenjeni podaci stare grupe
+    staraGrupa = request.POST['grupaID']
+    vrsta = request.POST['vrsta']
+    skolska_godina_pocetak = request.POST['skolska_godina_pocetak']
+    skolska_godina_kraj = request.POST['skolska_godina_kraj']
+    oznaka_semestra = request.POST['oznaka_semestra']
+    oznaka_grupe = request.POST['oznaka_grupe']
+    kapacitet = request.POST['kapacitet']
+    smer = request.POST['smer']
+    aktivna = request.POST.get('aktivna', False)
+
+    predmeti = request.POST.getlist("predmeti")
+
+    try:
+        semestar = Semestar.objects.get(vrsta=vrsta, skolska_godina_kraj=skolska_godina_kraj,
+                                        skolska_godina_pocetak=skolska_godina_pocetak)
+    except Semestar.DoesNotExist:
+        semestar = Semestar(vrsta=vrsta, skolska_godina_kraj=skolska_godina_kraj,skolska_godina_pocetak=skolska_godina_pocetak)
+        semestar.save()
+
+    izbornaGrupa = IzbornaGrupa.objects.get(id=staraGrupa)
+    izbornaGrupa.oznaka_grupe=oznaka_grupe
+    izbornaGrupa.oznaka_semestra = oznaka_semestra
+    izbornaGrupa.kapacitet = kapacitet
+    izbornaGrupa.smer = smer
+    izbornaGrupa.aktivna = aktivna
+
+    for predmet in izbornaGrupa.predmeti:
+        izbornaGrupa.predmeti.remove(predmet)
+
+    for predmet in predmeti:
+        p = Predmet.objects.get(id=predmet)
+        izbornaGrupa.predmeti.add(p)
+
+    izbornaGrupa.save()
+
+
+    return HttpResponse("Izmene sacuvane")
