@@ -13,4 +13,7 @@ urlpatterns = [
     path("saveizmenagrupa", views.sacuvanaIzmenaGrupe, name='saveizmenagrupa'),
     path('izborgrupe/<str:studentUserName>', views.izborGrupe, name='izborgrupe'),
     path("sacuvajizborgrupe", views.sacuvajIzborGrupe, name='sacuvajizborgrupe'),
+    path("ispisgrupa", views.ispisGrupa, name='ispisgrupa'),
+    path('ispisgrupa/<str:grupaID>', views.ispisGrupaID, name='ispisgrupaID'),
+
 ]

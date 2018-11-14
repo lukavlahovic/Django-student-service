@@ -221,3 +221,25 @@ def sacuvajIzborGrupe(request):
         izborgrupe.nepolozeni_predmeti.add(p)
 
     return HttpResponse("sacuvano")
+
+def ispisGrupa(request):
+
+    izbornagrupa = IzbornaGrupa.objects.all()
+    context = {'izbornagrupa':izbornagrupa}
+    return render(request, 'studserviceapp/ispisGrupa.html',
+                  context)
+
+def ispisGrupaID(request,grupaID):
+
+    izbornagrupa = IzbornaGrupa.objects.get(id=grupaID)
+    izborgrupe = IzborGrupe.objects.filter(izabrana_grupa=izbornagrupa)
+
+    lista = []
+    for ig in izborgrupe:
+        lista.append(ig.student)
+
+    context = {'lista': lista}
+    return render(request, 'studserviceapp/ispisStudenta.html',
+                  context)
+
+
