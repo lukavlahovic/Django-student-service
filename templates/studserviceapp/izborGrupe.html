@@ -5,10 +5,10 @@
     <title>izborGrupe</title>
 </head>
 <body>
-    <form action="{% url 'saveizmenagrupa'%}" method="post">
+    <form action="{% url 'sacuvajizborgrupe'%}" method="post">
         {% csrf_token %}
 
-        <textarea cols="1" rows="10" name="grupaID" style="display:none;">{{ grupa.id }}</textarea>
+        <textarea cols="1" rows="10" name="studentID" style="display:none;">{{ student.id }}</textarea>
 
         <label>Indeks</label>
         <textarea disabled rows="1" cols="10" name="smer">{{ student.smer }}</textarea>
@@ -47,12 +47,27 @@
         <input type="radio" name="prvi_put_upisuje_semestar" value=True> DA
         <input type="radio" name="prvi_put_upisuje_semestar" value=False> NE<br><br>
 
+        <label>Grupa koju student bira</label>
         <select name="izabrana_grupa">
+        {%  for g in lista %}
+            <option value={{ g.id }} >{{ g.oznaka_grupe }}</option>
+        {% endfor %}
+        </select><br><br>
 
+        <label>Nepolozeni predmeti iz prethodnih godina</label>
+        <select name="nepolozeni_predmeti" multiple>
+        {%  for p in predmeti %}
+            <option value={{ p.id }} >{{ p }}</option>
+        {% endfor %}
 
-        </select>
+        </select><br><br>
 
-        <input type="submit" value="Snimi">
+        <label>Nacin pracanja</label>
+        <input type="radio" name="nacin_placanja" value="Odjednom">Odjednom
+        <input type="radio" name="nacin_placanja" value="Stipendista">Stipendista
+        <input type="radio" name="nacin_placanja" value="Na rate">Na rate<br><br>
+
+        <input type="submit" value="Sacuvaj">
     </form>
 
 </body>

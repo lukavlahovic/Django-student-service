@@ -13,8 +13,14 @@
 
         <label>Izbor parnosti</label>
         <select name="vrsta">
-            <option value="parni">parni</option>
-            <option value="neparni">neparni</option>
+           {%if grupa.za_semestar.vrsta == "parni" %}
+             <option selected value="parni">parni</option>
+             <option value="neparni">neparni</option>
+           {% else %}
+             <option value="parni">parni</option>
+             <option selected value="neparni">neparni</option>
+           {% endif %}
+
         </select><br><br>
 
         <label>Pocetak semestra</label>

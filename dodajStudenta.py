@@ -25,11 +25,9 @@ n2.save()
 s2 = Student(ime='Andrija',prezime='Petrovic',godina_upisa=2017, broj_indeksa=85,smer='RN',nalog=n2)
 s2.save()
 
-g303 = Grupa.objects.get(oznaka_grupe='303')
-g302 = Grupa.objects.get(oznaka_grupe='302')
 
-s1.grupa.add(g303)
-s2.grupa.add(g302)
+
+
 s1.save()
 s2.save()
 

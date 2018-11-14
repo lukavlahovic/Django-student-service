@@ -165,22 +165,59 @@ def sacuvanaIzmenaGrupe(request):
     return HttpResponse("Izmene sacuvane")
 
 
+
+
+
 def izborGrupe(request, studentUserName):
 
     try:
         n = Nalog.objects.get(username=studentUserName)
-        s = Student.objects.get(nalog=n)
+        s: Student = Student.objects.get(nalog=n)
         semestar = Semestar.objects.last()
-        izbornagrupa = IzbornaGrupa.objects.filter(smer=s.smer,aktivna=True)
+        for ig in IzborGrupe.objects.filter(student=s):
+            if ig.izabrana_grupa.za_semestar == semestar:
+                return HttpResponse('Ovaj nalog je vec izabrao grupu')
 
-        lista = {}
+        izbornagrupa = IzbornaGrupa.objects.filter(smer=s.smer,aktivna=True,za_semestar=semestar)
+        p = Predmet.objects.all()
+
+        lista = []
         for g in izbornagrupa:
             if IzborGrupe.objects.filter(izabrana_grupa=g).count() < g.kapacitet:
-                lista.add(g)
+                lista.append(g)
 
-        context = {'student':s, 'semestar':semestar, 'izbornagrupa': izbornagrupa, 'lista': lista}
+        context = {'student': s, 'semestar': semestar, 'izbornagrupa': izbornagrupa, 'lista': lista, 'predmeti':p}
         return render(request, 'studserviceapp/izborGrupe.html',
                           context)
 
-    except IzbornaGrupa.DoesNotExist:
-        return HttpResponse('Grupa ne postoji')
+    except Nalog.DoesNotExist:
+        return HttpResponse('Nalog ne postoji')
+
+
+def sacuvajIzborGrupe(request):
+
+
+    ostvarenoESPB = request.POST['ostvarenoESPB']
+    upisujeESPB = request.POST['upisujeESPB']
+    broj_polozenih_ispita = request.POST['broj_polozenih_ispita']
+    upisuje_semestar = request.POST.get('upisuje_semestar',False)
+    prvi_put_upisuje_semestar = request.POST.get('prvi_put_upisuje_semestar',False)
+    izabrana_grupa = request.POST['izabrana_grupa']
+    grupa = IzbornaGrupa.objects.get(id=izabrana_grupa)
+    nepolozeni_predmeti = request.POST.getlist("nepolozeni_predmeti")
+    nacin_placanja = request.POST['nacin_placanja']
+    studentID = request.POST['studentID']
+
+    student = Student.objects.get(id=studentID)
+
+    izborgrupe = IzborGrupe(ostvarenoESPB=ostvarenoESPB,upisujeESPB=upisujeESPB,broj_polozenih_ispita=broj_polozenih_ispita,
+                            upisuje_semestar=upisuje_semestar,prvi_put_upisuje_semestar=prvi_put_upisuje_semestar,
+                            nacin_placanja=nacin_placanja,student=student,
+                            izabrana_grupa=grupa,upisan=False)
+    izborgrupe.save()
+
+    for predmet in nepolozeni_predmeti:
+        p = Predmet.objects.get(id=predmet)
+        izborgrupe.nepolozeni_predmeti.add(p)
+
+    return HttpResponse("sacuvano")
