@@ -79,7 +79,7 @@ def izborna_grupa_form(request):
     return render(request, 'studserviceapp/izbornaGrupa.html', context)
 
 def saveizbornagrupa(request):
-
+    
     vrsta = request.POST['vrsta']
     skolska_godina_pocetak = request.POST['skolska_godina_pocetak']
     skolska_godina_kraj = request.POST['skolska_godina_kraj']

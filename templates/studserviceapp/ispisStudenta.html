@@ -1,3 +1,4 @@
+{% if lista%}
 <table>
         <thead>
            <tr>
@@ -16,3 +17,6 @@
         {% endfor %}
         </tbody>
    </table>
+  {% else %}
+    <p>Nema studenata u grupi</p>
+{% endif %}
