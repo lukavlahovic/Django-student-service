@@ -15,5 +15,6 @@ urlpatterns = [
     path("sacuvajizborgrupe", views.sacuvajIzborGrupe, name='sacuvajizborgrupe'),
     path("ispisgrupa", views.ispisGrupa, name='ispisgrupa'),
     path('ispisgrupa/<str:grupaID>', views.ispisGrupaID, name='ispisgrupaID'),
-
+    path('uploadslike/<str:studentUserName>', views.uploadSlike, name='uploadslike'),
+    path('savesliku', views.savesliku, name='savesliku'),
 ]

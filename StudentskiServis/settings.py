@@ -84,7 +84,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'studservice',
         'USER': 'root',
-        'PASSWORD': '57788249',
+        'PASSWORD': '*Q0/vJ76t3l4',
         'HOST': 'localhost',
         'PORT': '3306',
     }
@@ -125,6 +125,8 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
-
+STATIC_ROOT = 'C:'
 STATIC_URL = '/static/'
 
+MEDIA_ROOT = 'D:'
+MEDIA_URL = '/media/'

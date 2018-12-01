@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Student info</title>
+</head>
+<body>
+
+    <form action="{% url 'savesliku' %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <textarea cols="1" rows="10" name="nalog" style="display:none; ">{{ nalog.username }}</textarea>
+        <label>Ime {{ student.ime }}</label><br>
+        <label>Prezime {{ student.prezime}}</label><br>
+        <label>Indeks {{ student.smer }} {{ student.broj_indeksa }} / {{ student.godina_upisa }}</label><br>
+        <label>Nalog {{ nalog.username }}</label><br>
+        <label>Grupa {{ student.grupa }}</label><br>
+        <label>Slika </label><br>
+        {%if student.slika %}
+             <img src="{{ student.slika.url }}" width="150" height="150"><br>
+        {% else %}
+             <label>Student nema sliku</label><br>
+        {% endif %}
+        <label>Dodaj sliku</label><br>
+        <input id="image" type="file" name="image">
+        <input type="submit" value="Snimi">
+    </form>
+
+</body>
+</html>

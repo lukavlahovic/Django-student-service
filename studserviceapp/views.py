@@ -243,3 +243,19 @@ def ispisGrupaID(request,grupaID):
                   context)
 
 
+def uploadSlike(request, studentUserName):
+    nalog = Nalog.objects.get(username=studentUserName)
+    student = Student.objects.get(nalog=nalog)
+
+    context = {'student': student,'nalog':nalog}
+    return render(request, 'studserviceapp/uploadSlike.html',context)
+
+def savesliku(request):
+    slika = request.FILES['image']
+    username = request.POST['nalog']
+    print(username)
+    nalog = Nalog.objects.get(username=username)
+    student = Student.objects.get(nalog=nalog)
+    student.slika = slika
+    student.save()
+    return HttpResponse("radi")

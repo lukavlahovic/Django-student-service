@@ -8,7 +8,7 @@
     <form action="{% url 'sacuvajizborgrupe'%}" method="post">
         {% csrf_token %}
 
-        <textarea cols="1" rows="10" name="studentID" style="display:none;">{{ student.id }}</textarea>
+        <textarea cols="1" rows="10" name="studentID" style="display:none; "> {{ student.id }}</textarea>
 
         <label>Indeks</label>
         <textarea disabled rows="1" cols="10" name="smer">{{ student.smer }}</textarea>
