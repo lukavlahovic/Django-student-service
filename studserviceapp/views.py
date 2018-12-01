@@ -259,3 +259,40 @@ def savesliku(request):
     student.slika = slika
     student.save()
     return HttpResponse("radi")
+
+def predmeti_profesor(request, username):
+    nalog = Nalog.objects.get(username=username)
+    nastavnik = Nastavnik.objects.get(nalog=nalog)
+
+    termini = Termin.objects.all().filter(nastavnik=nastavnik)
+    recnik = {}
+
+    for t in termini:
+        p = t.predmet
+        lista = []
+        if recnik.get(p.naziv) is None:
+            for g in t.grupe.all():
+                lista.append(g)
+        else:
+            lista = recnik.get(p.naziv)
+            for g in t.grupe.all():
+                lista.append(g)
+
+        recnik.setdefault(p.naziv, lista)
+
+    context = {'nastavnik': nastavnik, 'recnik': recnik}
+    return render(request, 'studserviceapp/predmetiProfesor.html', context)
+
+def grupe_sa_slikama(request,grupaID):
+    grupa = Grupa.objects.get(id=grupaID)
+    studenti = Student.objects.all().filter(grupa=grupa)
+
+    context = {'studenti': studenti}
+    return render(request, 'studserviceapp/ispisStudentaSaSlikom.html',
+                  context)
+
+def prikaz_slike(request, studentID):
+    student = Student.objects.get(id=studentID)
+    context = {'student': student}
+    return render(request, 'studserviceapp/prikazslike.html',
+                  context)

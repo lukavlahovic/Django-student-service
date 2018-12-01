@@ -1,0 +1,21 @@
+ <table>
+        <thead>
+           <tr>
+               <th>{{ nastavnik.nalog.username }}</th>
+           </tr>
+        </thead>
+        <tbody>
+        {%  for kljuc, vrednost in recnik.items %}
+             <tr>
+             <td>{{kljuc}}</td>
+             </tr>
+            {% for g in vrednost %}
+                <tr>
+                    <td><a href="{% url 'prikazgrupe' g.id %}">{{g.oznaka_grupe}}</a></td>
+                </tr>
+             {% endfor %}
+
+        {% endfor %}
+
+        </tbody>
+   </table>
