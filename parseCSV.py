@@ -1,6 +1,8 @@
 import csv
 import time
+from datetime import datetime
 import datetime
+from dateutil import parser
 import os
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "StudentskiServis.settings")
 import django
@@ -11,6 +13,7 @@ from studserviceapp.models import Grupa, Nastavnik, Termin, RasporedNastave, Pre
 
 def razdvojImeiPrezime(s):
 
+    s = s.strip()
     l = -len(s)
     for i in range(-1, l, -1):
         p = s[0:i]
@@ -18,6 +21,7 @@ def razdvojImeiPrezime(s):
             p = p[0:-1]
             break;
     return s[len(p) + 1:], p
+
 
 
 def napraviUsername(ime, prezime):
@@ -38,29 +42,72 @@ def razdvojVreme(vreme):
 def import_kolokvijum_from_csv(file_path):
    lines = file_path.split('\n')
    lines = lines[1::]
-   navodnik = 0
+   brojac = 2
    greske = {}
+
+
    for red in reader(lines):
        #izvlacimo predmet - red[0]
+       predmet = None
+       nastavnik = None
        try:
            predmet = Predmet.objects.get(naziv=red[0])
-       except:
-           
+       except Predmet.DoesNotExist:
+           lista = []
+           if greske.get(brojac) is None:
+                   lista.append('Ne postoji predmet u bazi')
+           else:
+               lista = greske.get(brojac)
+               lista.append('Ne postoji predmet u bazi')
+           greske.setdefault(brojac, lista)
+
+
        #izvlacimo ime profesora - red[3]
-       p = red[3].split(",")
-       for profesor in p:
-           p
+       profesori = red[3].split(",")
+       for p in profesori:
+           imeiprezime = razdvojImeiPrezime(p)
+           ime = imeiprezime[0]
+           prezime = imeiprezime[1]
+           try:
+               nastavnik = Nastavnik.objects.get(ime=ime,prezime=prezime)
+           except Nastavnik.DoesNotExist:
+               try:
+                   nastavnik = Nastavnik.objects.get(ime=prezime, prezime=ime)
+               except Nastavnik.DoesNotExist:
+                   lista = []
+                   if greske.get(brojac) is None:
+                       lista.append('Ne postoji nastavnik u bazi')
+                   else:
+                       lista = greske.get(brojac)
+                       lista.append('Ne postoji nastavnik u bazi')
+                   greske.setdefault(brojac, lista)
 
        #izvlacimo ucionica - red[4]
-
+       ucionice = red[4]
        #izvlacimo vreme - red[5]
-
-       #izvlacimo dan - red[6]
+       vreme = razdvojVreme(red[5])
+       pocetak = vreme[0]+ ':00'
+       kraj = vreme[1] + ':00'
+       #izvlacimo dan - red[6]/////NIJE U MODELU
 
        #izvlacimo datum - red[7]
+       datumcsv = red[7].split('.')
+       datum = datumcsv[0]+'/'+datumcsv[1]+'/'+str(datetime.datetime.today().year)
+       datum = datetime.datetime.strptime(datum,'%d/%m/%Y').date()
 
 
-       print(red[0],red[3],red[4],red[5],red[6],red[7])
+       brojac+=1
+      # spisak = greske.get(brojac-1)
+      # try:
+           #for s in spisak:
+             # print(s,end=' ')
+      # except:
+           #print(spisak,end='')
+      # print()
+       try:
+           print(predmet.naziv, nastavnik.ime,ucionice, pocetak, kraj, datum)
+       except:
+           print("Nema")
 
 
 
