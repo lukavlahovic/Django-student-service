@@ -2,6 +2,7 @@
 from django.http import HttpResponse
 from django.shortcuts import render
 import datetime
+import parseCSV
 
 from studserviceapp.models import Grupa, Nastavnik, Termin, RasporedNastave, Predmet, Nalog, Semestar, Student, \
     Obavestenje, IzbornaGrupa, IzborGrupe
@@ -296,3 +297,13 @@ def prikaz_slike(request, studentID):
     context = {'student': student}
     return render(request, 'studserviceapp/prikazslike.html',
                   context)
+
+def upload_kolokvijum(request):
+    return render(request,'studserviceapp/uploadKolokvijum.html')
+
+def savekolokvijum(request):
+    kolokvijumska_nedelja = request.POST['kolokvijum']
+    file_path = request.FILES['fajl_kolokvijum']
+    file_data = file_path.read().decode("utf-8")
+    parseCSV.import_kolokvijum_from_csv(file_data)
+    return HttpResponse("radi")

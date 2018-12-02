@@ -20,4 +20,6 @@ urlpatterns = [
     path('prikazpredmeta/<str:username>', views.predmeti_profesor, name='prikazpredmeta'),
     path('prikazgrupe/<str:grupaID>', views.grupe_sa_slikama, name='prikazgrupe'),
     path('prikazslike/<str:studentID>', views.prikaz_slike, name='prikazslike'),
+    path("uploadkolokvijum", views.upload_kolokvijum, name='uploadkolokvijum'),
+    path('savekolokvijum', views.savekolokvijum, name='savekolokvijum'),
 ]

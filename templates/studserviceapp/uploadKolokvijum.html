@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Upload kolokvijum</title>
+</head>
+<body>
+    <form action="{% url 'savekolokvijum' %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <label>Redni broj kolokvijumse nedelje </label>
+        <textarea rows="1" cols="10" name="kolokvijum"></textarea><br>
+        <input name="fajl_kolokvijum" type="file" id="fajl_kolokvijum">
+        <input type="submit" value="Snimi">
+    </form>
+</body>
+</html>

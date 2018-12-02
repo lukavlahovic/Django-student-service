@@ -1,11 +1,13 @@
 import csv
 import time
+import datetime
 import os
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "StudentskiServis.settings")
 import django
 django.setup()
 
-from studserviceapp.models import Grupa, Nastavnik, Termin, RasporedNastave, Predmet, Nalog, Semestar
+from csv import reader
+from studserviceapp.models import Grupa, Nastavnik, Termin, RasporedNastave, Predmet, Nalog, Semestar, IzborGrupe, IzbornaGrupa
 
 def razdvojImeiPrezime(s):
 
@@ -33,6 +35,34 @@ def razdvojVreme(vreme):
     return vreme.split('-')
 
 
+def import_kolokvijum_from_csv(file_path):
+   lines = file_path.split('\n')
+   lines = lines[1::]
+   navodnik = 0
+   greske = {}
+   for red in reader(lines):
+       #izvlacimo predmet - red[0]
+       try:
+           predmet = Predmet.objects.get(naziv=red[0])
+       except:
+           
+       #izvlacimo ime profesora - red[3]
+       p = red[3].split(",")
+       for profesor in p:
+           p
+
+       #izvlacimo ucionica - red[4]
+
+       #izvlacimo vreme - red[5]
+
+       #izvlacimo dan - red[6]
+
+       #izvlacimo datum - red[7]
+
+
+       print(red[0],red[3],red[4],red[5],red[6],red[7])
+
+
 
 
 def import_timetable_from_csv(file_path):
@@ -46,7 +76,7 @@ def import_timetable_from_csv(file_path):
         skupGrupa = set()
         semester = Semestar(vrsta='neparni', skolska_godina_pocetak=2018, skolska_godina_kraj=2019)
         semester.save()
-        rasporedNastave = RasporedNastave(datum_unosa=datetime.datetime.today(),semestar=semester)
+        rasporedNastave = RasporedNastave(datum_unosa=datetime.datetime.today(), semestar=semester)
         rasporedNastave.save()
         for _red in raspored_csv:
             if b == 1:
@@ -122,14 +152,14 @@ def import_timetable_from_csv(file_path):
 
 
 
+#IzborGrupe.objects.all().delete()
+#IzbornaGrupa.objects.all().delete()
+#Semestar.objects.all().delete()
+#RasporedNastave.objects.all().delete()
+#Grupa.objects.all().delete()
+#Nastavnik.objects.all().delete()
+#Termin.objects.all().delete()
+#Predmet.objects.all().delete()
+#Nalog.objects.all().delete()
 
-
-RasporedNastave.objects.all().delete()
-Grupa.objects.all().delete()
-Nastavnik.objects.all().delete()
-Semestar.objects.all().delete()
-Termin.objects.all().delete()
-Predmet.objects.all().delete()
-Nalog.objects.all().delete()
-
-import_timetable_from_csv('rasporedCSV.csv')
+#import_timetable_from_csv('rasporedCSV.csv')
