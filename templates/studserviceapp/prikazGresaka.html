@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Prikaz Gresaka</title>
+</head>
+<body>
+    <form action="{% url 'izmenicu_sam' %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <textarea cols="1" rows="10" name="podaci" style="display:none; "> {{ podaci }}</textarea>
+        <label>Greske:</label><br>
+        {% for k,v in greska.items %}
+            <a href="{% url 'forma_ispravak' k %}">Greska u redu {{ k }}: {{ v }}</a><br>
+        {% endfor %}
+        <input type="submit" value="Izmenicu sam fajl">
+    </form>
+</body>
+</html>

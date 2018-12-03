@@ -22,4 +22,6 @@ urlpatterns = [
     path('prikazslike/<str:studentID>', views.prikaz_slike, name='prikazslike'),
     path("uploadkolokvijum", views.upload_kolokvijum, name='uploadkolokvijum'),
     path('savekolokvijum', views.savekolokvijum, name='savekolokvijum'),
+    path('izmenicu_sam', views.izmenicu_sam, name='izmenicu_sam'),
+    path('forma_ispravak/<str:broj_reda>', views.forma_ispravak, name='forma_ispravak'),
 ]

@@ -5,7 +5,7 @@ import datetime
 import parseCSV
 
 from studserviceapp.models import Grupa, Nastavnik, Termin, RasporedNastave, Predmet, Nalog, Semestar, Student, \
-    Obavestenje, IzbornaGrupa, IzborGrupe
+    Obavestenje, IzbornaGrupa, IzborGrupe, TerminPolaganja, RasporedPolaganja
 
 
 def index(request):
@@ -305,5 +305,22 @@ def savekolokvijum(request):
     kolokvijumska_nedelja = request.POST['kolokvijum']
     file_path = request.FILES['fajl_kolokvijum']
     file_data = file_path.read().decode("utf-8")
-    parseCSV.import_kolokvijum_from_csv(file_data)
-    return HttpResponse("radi")
+    greske = parseCSV.import_kolokvijum_from_csv(file_data,kolokvijumska_nedelja)
+    recnik = {}
+    for k,v in greske[0].items():
+        s=""
+        for e in v:
+            s+=(str(e) + ";")
+        recnik.setdefault(k,s)
+       # print(recnik.get(k))
+    context = {'greska':recnik,'podaci':greske[1]}
+    return render(request,'studserviceapp/prikazGresaka.html',context)
+
+def izmenicu_sam(request):
+    return HttpResponse("radi izmenicu")
+
+def forma_ispravak(request,broj_reda):
+    podaci = request.POST.getlist("podaci")
+    print("podaci =",end=" ")
+    print(podaci)
+    return render(request,'studserviceapp/formaIspravak.html')

@@ -9,7 +9,7 @@ import django
 django.setup()
 
 from csv import reader
-from studserviceapp.models import Grupa, Nastavnik, Termin, RasporedNastave, Predmet, Nalog, Semestar, IzborGrupe, IzbornaGrupa
+from studserviceapp.models import Grupa, Nastavnik, Termin, RasporedNastave, Predmet, Nalog, Semestar, IzborGrupe, IzbornaGrupa,RasporedPolaganja
 
 def razdvojImeiPrezime(s):
 
@@ -39,12 +39,15 @@ def razdvojVreme(vreme):
     return vreme.split('-')
 
 
-def import_kolokvijum_from_csv(file_path):
+def import_kolokvijum_from_csv(file_path,kolokvijumska_nedelja):
+   raspored_polaganja = RasporedPolaganja(ispitni_rok='Januar',kolokvijumska_nedelja=kolokvijumska_nedelja)
+   dani = ['Ponedeljak','Utorak','Sreda','Četvrtak','Petak','Subota','Nedelja']
    lines = file_path.split('\n')
    lines = lines[1::]
    brojac = 2
    greske = {}
-
+   neispravni_termini = {}
+   detektor_greske = False
 
    for red in reader(lines):
        #izvlacimo predmet - red[0]
@@ -53,6 +56,7 @@ def import_kolokvijum_from_csv(file_path):
        try:
            predmet = Predmet.objects.get(naziv=red[0])
        except Predmet.DoesNotExist:
+           detektor_greske = True
            lista = []
            if greske.get(brojac) is None:
                    lista.append('Ne postoji predmet u bazi')
@@ -61,6 +65,16 @@ def import_kolokvijum_from_csv(file_path):
                lista.append('Ne postoji predmet u bazi')
            greske.setdefault(brojac, lista)
 
+       #provera za zareze
+       if red[1]!='' and red[2]!='':
+           detektor_greske = True
+           lista = []
+           if greske.get(brojac) is None:
+                   lista.append('Greska sa zarezima')
+           else:
+               lista = greske.get(brojac)
+               lista.append('Greska sa zarezima')
+           greske.setdefault(brojac, lista)
 
        #izvlacimo ime profesora - red[3]
        profesori = red[3].split(",")
@@ -74,6 +88,7 @@ def import_kolokvijum_from_csv(file_path):
                try:
                    nastavnik = Nastavnik.objects.get(ime=prezime, prezime=ime)
                except Nastavnik.DoesNotExist:
+                   detektor_greske = True
                    lista = []
                    if greske.get(brojac) is None:
                        lista.append('Ne postoji nastavnik u bazi')
@@ -83,20 +98,78 @@ def import_kolokvijum_from_csv(file_path):
                    greske.setdefault(brojac, lista)
 
        #izvlacimo ucionica - red[4]
-       ucionice = red[4]
+       ucionice = red[4].strip()
+       if ucionice=='':
+           detektor_greske = True
+           ucionice = None
+           lista = []
+           if greske.get(brojac) is None:
+               lista.append('Niste uneli ucionice')
+           else:
+               lista = greske.get(brojac)
+               lista.append('Niste uneli ucionice')
+           greske.setdefault(brojac, lista)
+
        #izvlacimo vreme - red[5]
        vreme = razdvojVreme(red[5])
-       pocetak = vreme[0]+ ':00'
-       kraj = vreme[1] + ':00'
+       if int(vreme[0])>24 or int(vreme[1])>24 or int(vreme[0])>int(vreme[1]):
+           detektor_greske = True
+           pocetak = None
+           kraj = None
+           lista = []
+           if greske.get(brojac) is None:
+               lista.append('Greska sa unosom vremena')
+           else:
+               lista = greske.get(brojac)
+               lista.append('Greska sa unosom vremena')
+           greske.setdefault(brojac, lista)
+       else:
+           pocetak = vreme[0] + ':00'
+           kraj = vreme[1] + ':00'
+
        #izvlacimo dan - red[6]/////NIJE U MODELU
+       dan = red[6]
+       if dan not in dani:
+           detektor_greske = True
+           dan = None
+           lista = []
+           if greske.get(brojac) is None:
+               lista.append('Pogresan dan')
+           else:
+               lista = greske.get(brojac)
+               lista.append('Pogresan dan')
+           greske.setdefault(brojac, lista)
 
        #izvlacimo datum - red[7]
        datumcsv = red[7].split('.')
        datum = datumcsv[0]+'/'+datumcsv[1]+'/'+str(datetime.datetime.today().year)
-       datum = datetime.datetime.strptime(datum,'%d/%m/%Y').date()
+       try:
+           datum = datetime.datetime.strptime(datum,'%d/%m/%Y').date()
+       except:
+           detektor_greske = True
+           datum = None
+           lista = []
+           if greske.get(brojac) is None:
+               lista.append('Pogresan datum')
+           else:
+               lista = greske.get(brojac)
+               lista.append('Pogresan datum')
+           greske.setdefault(brojac, lista)
 
 
+       if detektor_greske:
+           lista_gresaka = []
+           lista_gresaka.append(ucionice)
+           lista_gresaka.append(pocetak)
+           lista_gresaka.append(kraj)
+           lista_gresaka.append(datum)
+           lista_gresaka.append(raspored_polaganja)
+           lista_gresaka.append(predmet)
+           lista_gresaka.append(nastavnik)
+           neispravni_termini.setdefault(brojac, lista_gresaka)
+           detektor_greske=False
        brojac+=1
+
       # spisak = greske.get(brojac-1)
       # try:
            #for s in spisak:
@@ -104,11 +177,11 @@ def import_kolokvijum_from_csv(file_path):
       # except:
            #print(spisak,end='')
       # print()
-       try:
-           print(predmet.naziv, nastavnik.ime,ucionice, pocetak, kraj, datum)
-       except:
-           print("Nema")
-
+      # try:
+        #   print(predmet.naziv, nastavnik.ime,ucionice, pocetak, kraj, datum)
+      # except:
+       #    print("Nema")
+   return greske,neispravni_termini
 
 
 
