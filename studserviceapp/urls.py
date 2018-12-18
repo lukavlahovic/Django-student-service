@@ -24,4 +24,6 @@ urlpatterns = [
     path('savekolokvijum', views.savekolokvijum, name='savekolokvijum'),
     path('izmenicu_sam', views.izmenicu_sam, name='izmenicu_sam'),
     path('forma_ispravak/<str:broj_reda>', views.forma_ispravak, name='forma_ispravak'),
+    path('slanje_mejla/<str:username>', views.slanje_mejla, name='slanje_mejla'),
+    path('posalji_mejl', views.posalji_mejl, name='posalji_mejl'),
 ]

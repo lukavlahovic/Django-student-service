@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from django.shortcuts import render
 import datetime
 import parseCSV
+import send_gmails
 
 from studserviceapp.models import Grupa, Nastavnik, Termin, RasporedNastave, Predmet, Nalog, Semestar, Student, \
     Obavestenje, IzbornaGrupa, IzborGrupe, TerminPolaganja, RasporedPolaganja
@@ -324,3 +325,68 @@ def forma_ispravak(request,broj_reda):
     print("podaci =",end=" ")
     print(podaci)
     return render(request,'studserviceapp/formaIspravak.html')
+
+def slanje_mejla(request,username):
+    #provera da li nalog postoji
+    try:
+        nalog = Nalog.objects.get(username=username)
+    except:
+        return HttpResponse("Nalog ne postoji")
+    #provera uloge
+    if nalog.uloga == 'student':
+        return HttpResponse("Studnet nema pravo pristupa")
+
+    elif nalog.uloga == 'nastavnik':
+        nastavnik = Nastavnik.objects.get(nalog=nalog)
+        termini = Termin.objects.all().filter(nastavnik=nastavnik)
+        recnik = {}
+
+        for t in termini:
+            p = t.predmet
+            lista = []
+            if recnik.get(p.naziv) is None:
+                for g in t.grupe.all():
+                    lista.append(g)
+            else:
+                lista = recnik.get(p.naziv)
+                for g in t.grupe.all():
+                    lista.append(g)
+
+            recnik.setdefault(p.naziv, lista)
+
+        context = {'nalog':nalog,'nastavnik': nastavnik, 'recnik': recnik}
+
+        return render(request,'studserviceapp/slanjeMejla.html',context)
+
+    elif nalog.uloga == 'sekretar' or nalog.uloga == 'administrator':
+        predmeti = Predmet.objects.all()
+        termini = Termin.objects.all()
+        lista1 = []
+        smerovi = []
+        for t in termini:
+            for g in t.grupe.all():
+                if g in lista1:
+                    continue
+                lista1.append(g)
+                if g.smer in smerovi:
+                    continue
+                smerovi.append(g.smer)
+    context = {'nalog':nalog,'predmeti':predmeti,'grupe':lista1,'smerovi':smerovi}
+    return render(request, 'studserviceapp/slanjeMejla.html',context)
+
+def posalji_mejl(request):
+    nalog_str = request.POST['nalog']
+    nalog = Nalog.objects.get(username=nalog_str)
+    naslov = request.POST['naslov']
+    tekst = request.POST['tekst']
+    try:
+        attach = request.FILES['attach']
+    except:
+        attach = None
+    username = nalog.username + "@raf.rs"
+    izbor = request.POST.getlist('izbor')
+
+    send_gmails.create_and_send_message("lvlahovic16@raf.rs","l_jelic17@raf.rs",naslov,tekst,attach,None)
+
+
+    return HttpResponse("mejl poslat")
