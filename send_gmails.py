@@ -12,7 +12,11 @@ from oauth2client import client, tools
 import httplib2
 import email.encoders
 from oauth2client import file
-
+try:
+    import argparse
+    flags = tools.argparser.parse_args([])
+except ImportError:
+    flags = None
 
 SCOPES = 'https://www.googleapis.com/auth/gmail.send'
 CLIENT_SECRET_FILE = 'credentials.json'
@@ -31,7 +35,10 @@ def get_credentials():
     if not credentials or credentials.invalid:
         flow = client.flow_from_clientsecrets(CLIENT_SECRET_FILE, SCOPES)
         flow.user_agent = APPLICATION_NAME
-        credentials = tools.run_flow(flow, store)
+        if flags:
+            credentials = tools.run_flow(flow, store,flags)
+        else:
+            credentials = tools.run(flow,store)
         print('Storing credentials to ' + credential_path)
     return credentials
 
