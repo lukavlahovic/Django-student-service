@@ -135,3 +135,6 @@ class Obavestenje(models.Model):
     datum_postavljanja = models.DateTimeField()
     tekst = models.CharField(max_length=1000)
     fajl = models.FileField()
+
+class Attachment(models.Model):
+    fajl = models.FileField(upload_to='media/studserviceapp' ,null=True)

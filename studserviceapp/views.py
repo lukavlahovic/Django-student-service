@@ -6,7 +6,7 @@ import parseCSV
 import send_gmails
 
 from studserviceapp.models import Grupa, Nastavnik, Termin, RasporedNastave, Predmet, Nalog, Semestar, Student, \
-    Obavestenje, IzbornaGrupa, IzborGrupe, TerminPolaganja, RasporedPolaganja
+    Obavestenje, IzbornaGrupa, IzborGrupe, TerminPolaganja, RasporedPolaganja, Attachment
 
 
 def index(request):
@@ -381,12 +381,15 @@ def posalji_mejl(request):
     tekst = request.POST['tekst']
     try:
         attach = request.FILES['attach']
+        attachment = Attachment.objects.create(fajl=attach)
+        attachment_str = str(attachment.fajl)
+        dir = 'D:/' + attachment_str
     except:
         attach = None
     username = nalog.username + "@raf.rs"
     izbor = request.POST.getlist('izbor')
 
-    send_gmails.create_and_send_message("lvlahovic16@raf.rs","l_jelic17@raf.rs",naslov,tekst,attach,None)
+    send_gmails.create_and_send_message("lvlahovic16@raf.rs","a_petrovic17@raf.rs",naslov,tekst,dir,None)
 
 
     return HttpResponse("mejl poslat")
