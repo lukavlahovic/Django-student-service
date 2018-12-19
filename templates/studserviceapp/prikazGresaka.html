@@ -8,6 +8,7 @@
     <form action="{% url 'izmenicu_sam' %}" method="post" enctype="multipart/form-data">
         {% csrf_token %}
         <textarea cols="1" rows="10" name="podaci" style="display:none; "> {{ podaci }}</textarea>
+        <textarea cols="10" rows="1" name="kolokvijumska_nedelja" style="display:none; ">{{ kolokvijumska_nedelja }}</textarea>
         <label>Greske:</label><br>
         {% for k,v in greska.items %}
             <a href="{% url 'forma_ispravak' k %}">Greska u redu {{ k }}: {{ v }}</a><br>

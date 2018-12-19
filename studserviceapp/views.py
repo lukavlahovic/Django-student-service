@@ -314,11 +314,17 @@ def savekolokvijum(request):
             s+=(str(e) + ";")
         recnik.setdefault(k,s)
        # print(recnik.get(k))
-    context = {'greska':recnik,'podaci':greske[1]}
+    context = {'greska':recnik,'podaci':greske[1],'kolokvijumska_nedelja':kolokvijumska_nedelja}
     return render(request,'studserviceapp/prikazGresaka.html',context)
 
 def izmenicu_sam(request):
-    return HttpResponse("radi izmenicu")
+    kolokvijumska_nedelja = request.POST['kolokvijumska_nedelja']
+    print(kolokvijumska_nedelja)
+    rp = RasporedPolaganja.objects.get(kolokvijumska_nedelja=kolokvijumska_nedelja)
+    for t in TerminPolaganja.objects.all().filter(raspored_polaganja=rp):
+        t.delete()
+    rp.delete()
+    return render(request,'studserviceapp/uploadKolokvijum.html')
 
 def forma_ispravak(request,broj_reda):
     podaci = request.POST.getlist("podaci")

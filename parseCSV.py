@@ -9,7 +9,7 @@ import django
 django.setup()
 
 from csv import reader
-from studserviceapp.models import Grupa, Nastavnik, Termin, RasporedNastave, Predmet, Nalog, Semestar, IzborGrupe, IzbornaGrupa,RasporedPolaganja
+from studserviceapp.models import Grupa, Nastavnik, Termin, RasporedNastave, Predmet, Nalog, Semestar, IzborGrupe, IzbornaGrupa,RasporedPolaganja,TerminPolaganja
 
 def razdvojImeiPrezime(s):
 
@@ -40,7 +40,10 @@ def razdvojVreme(vreme):
 
 
 def import_kolokvijum_from_csv(file_path,kolokvijumska_nedelja):
-   raspored_polaganja = RasporedPolaganja(ispitni_rok='Januar',kolokvijumska_nedelja=kolokvijumska_nedelja)
+   RasporedPolaganja.objects.all().delete()
+   TerminPolaganja.objects.all().delete()
+   raspored_polaganja = RasporedPolaganja(kolokvijumska_nedelja=kolokvijumska_nedelja)
+   raspored_polaganja.save()
    dani = ['Ponedeljak','Utorak','Sreda','Četvrtak','Petak','Subota','Nedelja']
    lines = file_path.split('\n')
    lines = lines[1::]
@@ -168,19 +171,11 @@ def import_kolokvijum_from_csv(file_path,kolokvijumska_nedelja):
            lista_gresaka.append(nastavnik)
            neispravni_termini.setdefault(brojac, lista_gresaka)
            detektor_greske=False
+       else:
+           t = TerminPolaganja(ucionice=ucionice,pocetak=pocetak,zavrsetak=kraj,datum=datum,raspored_polaganja=raspored_polaganja,predmet=predmet,nastavnik=nastavnik)
+           t.save()
        brojac+=1
 
-      # spisak = greske.get(brojac-1)
-      # try:
-           #for s in spisak:
-             # print(s,end=' ')
-      # except:
-           #print(spisak,end='')
-      # print()
-      # try:
-        #   print(predmet.naziv, nastavnik.ime,ucionice, pocetak, kraj, datum)
-      # except:
-       #    print("Nema")
    return greske,neispravni_termini
 
 
