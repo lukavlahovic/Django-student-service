@@ -23,25 +23,28 @@
         <input id="attach" type="file" name="attach">
         {% if nalog.uloga == 'nastavnik' %}
             <select name="izbor" multiple>
-            {% for k,v in recnik.items %}
-                <option value={{ k.id }} >{{ k }}</option>
-                {% for g in v %}
-                    <option value={{ g.id }} >{{ g.oznaka_grupe }}</option>
-                {% endfor %}
+
+            {% for p in predmeti %}
+                <option value="{{ p.naziv }}" >{{ p }}</option>
             {% endfor %}
+
+            {% for g in grupe %}
+                <option value="{{ g.oznaka_grupe }}" >{{ g.oznaka_grupe }}</option>
+            {% endfor %}
+
             </select>
         {% endif %}
         {% if nalog.uloga == 'sekretar' or nalog.uloga == 'administrator'%}
             <select name="izbor">
                 <option value="svi">Svi</option>
                 {% for s in smerovi %}
-                    <option value="smer">{{ s }}</option>
+                    <option value="{{ s }}">{{ s }}</option>
                 {% endfor %}
                 {% for p in predmeti %}
-                    <option value={{ p.id }}>{{ p }}</option>
+                    <option value="{{ p.naziv }}">{{ p }}</option>
                 {% endfor %}
                 {% for g in grupe %}
-                    <option value={{ g.id }}>{{ g.oznaka_grupe }}</option>
+                    <option value="{{ g.oznaka_grupe }}">{{ g.oznaka_grupe }}</option>
                 {% endfor %}
             </select>
         {% endif %}

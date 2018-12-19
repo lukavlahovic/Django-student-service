@@ -340,10 +340,16 @@ def slanje_mejla(request,username):
         nastavnik = Nastavnik.objects.get(nalog=nalog)
         termini = Termin.objects.all().filter(nastavnik=nastavnik)
         recnik = {}
-
+        p_lista = []
+        g_lista = []
         for t in termini:
             p = t.predmet
-            lista = []
+            if not p in p_lista:
+                p_lista.append(p)
+            for g in t.grupe.all():
+                if not g in g_lista:
+                    g_lista.append(g)
+            """
             if recnik.get(p.naziv) is None:
                 for g in t.grupe.all():
                     lista.append(g)
@@ -353,8 +359,8 @@ def slanje_mejla(request,username):
                     lista.append(g)
 
             recnik.setdefault(p.naziv, lista)
-
-        context = {'nalog':nalog,'nastavnik': nastavnik, 'recnik': recnik}
+"""
+        context = {'nalog':nalog,'nastavnik': nastavnik, 'predmeti': p_lista,'grupe':g_lista}
 
         return render(request,'studserviceapp/slanjeMejla.html',context)
 
@@ -386,10 +392,55 @@ def posalji_mejl(request):
         dir = 'D:/' + attachment_str
     except:
         attach = None
+        dir = None
     username = nalog.username + "@raf.rs"
     izbor = request.POST.getlist('izbor')
+    print(izbor)
+    for i in izbor:
+        if i =="svi":
+            svi_studenti = Student.objects.all()
+            for s in svi_studenti:
+                primalac = s.nalog.username + '@raf.rs'
+                send_gmails.create_and_send_message("lvlahovic16@raf.rs", primalac, naslov, tekst, dir, None)
+        if i == 'RN' or i=='RM':
+            studlista = []
+            tmp = Grupa.objects.all().filter(smer=i)
+            for g in tmp:
+                studneti = Student.objects.all().filter(grupa=g)
+                for s in studneti:
+                    studlista.append(s)
+            for s in studlista:
+                primalac = s.nalog.username + '@raf.rs'
+                send_gmails.create_and_send_message("lvlahovic16@raf.rs", primalac, naslov, tekst, dir, None)
 
-    send_gmails.create_and_send_message("lvlahovic16@raf.rs","a_petrovic17@raf.rs",naslov,tekst,dir,None)
+        try:
+            tmp = Predmet.objects.get(naziv=i)
+            print("radi predmet")
+            print(tmp)
+            s_lista = []
+            termini = Termin.objects.all().filter(predmet=tmp,tip_nastave='predavanja')
+            for t in termini:
+                for g in t.grupe.all():
+                    studneti = Student.objects.all().filter(grupa=g)
+                    for s in studneti:
+                        s_lista.append(s)
+            for s in s_lista:
+                primalac = s.nalog.username + '@raf.rs'
+                send_gmails.create_and_send_message("lvlahovic16@raf.rs", primalac, naslov, tekst, dir, None)
+        except:
+            print("predmet except")
+        try:
+            tmp = Grupa.objects.get(oznaka_grupe=i)
+            print("radi grupu")
+            studneti1 = Student.objects.all().filter(grupa=tmp)
+            for s in studneti1:
+                primalac = s.nalog.username + '@raf.rs'
+                send_gmails.create_and_send_message("lvlahovic16@raf.rs", primalac, naslov, tekst, dir, None)
+        except:
+            print("grupa except")
+
+
+    #send_gmails.create_and_send_message("lvlahovic16@raf.rs","a_petrovic17@raf.rs",naslov,tekst,dir,None)
 
 
     return HttpResponse("mejl poslat")
