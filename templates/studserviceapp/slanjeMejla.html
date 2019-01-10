@@ -1,10 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>SlanjeMejla</title>
-</head>
-<body>
+{% extends 'studserviceapp/BasedNastavnik.html' %}
+{% block content %}
     <form action="{% url 'posalji_mejl' %}" method="post" enctype="multipart/form-data">
         {% csrf_token %}
 
@@ -50,5 +45,4 @@
         {% endif %}
         <input type="submit" value="Posalji mejl">
     </form>
-</body>
-</html>
+{% endblock %}

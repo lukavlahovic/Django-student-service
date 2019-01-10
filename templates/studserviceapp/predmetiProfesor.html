@@ -1,9 +1,7 @@
- <table>
-        <thead>
-           <tr>
-               <th>{{ nastavnik.nalog.username }}</th>
-           </tr>
-        </thead>
+{% extends 'studserviceapp/BasedNastavnik.html' %}
+{% block content %}
+
+    <table>
         <tbody>
         {%  for kljuc, vrednost in recnik.items %}
              <tr>
@@ -11,11 +9,12 @@
              </tr>
             {% for g in vrednost %}
                 <tr>
-                    <td><a href="{% url 'prikazgrupe' g.id %}">{{g.oznaka_grupe}}</a></td>
+                    <td><a href="{% url 'prikazgrupe' nastavnik.nalog.username g.id %}">{{g.oznaka_grupe}}</a></td>
                 </tr>
              {% endfor %}
 
         {% endfor %}
 
         </tbody>
-   </table>
+    </table>
+{% endblock %}

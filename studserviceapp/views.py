@@ -1,6 +1,6 @@
 
 from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 import datetime
 import parseCSV
 import send_gmails
@@ -188,7 +188,7 @@ def izborGrupe(request, studentUserName):
             if IzborGrupe.objects.filter(izabrana_grupa=g).count() < g.kapacitet:
                 lista.append(g)
 
-        context = {'student': s, 'semestar': semestar, 'izbornagrupa': izbornagrupa, 'lista': lista, 'predmeti':p}
+        context = {'nalog':n,'student': s, 'semestar': semestar, 'izbornagrupa': izbornagrupa, 'lista': lista, 'predmeti':p}
         return render(request, 'studserviceapp/izborGrupe.html',
                           context)
 
@@ -282,20 +282,22 @@ def predmeti_profesor(request, username):
 
         recnik.setdefault(p.naziv, lista)
 
-    context = {'nastavnik': nastavnik, 'recnik': recnik}
+    context = {'nalog':nalog,'nastavnik': nastavnik, 'recnik': recnik}
     return render(request, 'studserviceapp/predmetiProfesor.html', context)
 
-def grupe_sa_slikama(request,grupaID):
+def grupe_sa_slikama(request,username,grupaID):
+    nalog = Nalog.objects.get(username=username)
     grupa = Grupa.objects.get(id=grupaID)
     studenti = Student.objects.all().filter(grupa=grupa)
 
-    context = {'studenti': studenti}
+    context = {'nalog':nalog,'studenti': studenti}
     return render(request, 'studserviceapp/ispisStudentaSaSlikom.html',
                   context)
 
-def prikaz_slike(request, studentID):
+def prikaz_slike(request,username,studentID):
+    nalog = Nalog.objects.get(username=username)
     student = Student.objects.get(id=studentID)
-    context = {'student': student}
+    context = {'nalog':nalog,'student': student}
     return render(request, 'studserviceapp/prikazslike.html',
                   context)
 
@@ -450,3 +452,51 @@ def posalji_mejl(request):
 
 
     return HttpResponse("mejl poslat")
+
+def logovanje(request):
+    return render(request,'studserviceapp/logovanje.html')
+
+def pomocna(request):
+    username = request.POST['nalog']
+    try:
+        nalog = Nalog.objects.get(username=username)
+    except:
+        return HttpResponse("Nalog ne postoji")
+    url = 'pocetni_ekran/' + username
+    return redirect(url)
+
+def pocetni_ekran(request,username):
+    #username = request.POST['nalog']
+    try:
+        nalog = Nalog.objects.get(username=username)
+    except:
+        return HttpResponse("Nalog ne postoji")
+
+    if nalog.uloga == "student":
+        s = Student.objects.get(nalog=nalog)
+        g = Grupa.objects.get(student=s)
+
+        t = Termin.objects.all().filter(grupe=g)
+        context = {'nalog':nalog,'termini':t}
+        return render(request, 'studserviceapp/pocetniEkranStudent.html', context)
+
+    elif nalog.uloga == "nastavnik":
+        s = Termin.objects.all().filter(nastavnik=Nastavnik.objects.get(nalog=nalog))
+        context = {'nalog':nalog,'termini':s}
+        return render(request, 'studserviceapp/pocetniEkranNastavnik.html', context)
+
+    elif nalog.uloga == "sekretar":
+        termini = Termin.objects.all()
+        context = {'nalog': nalog,'termini':termini}
+        return render(request, 'studserviceapp/pocetniEkranSekretar.html', context)
+
+    else:
+        termini = Termin.objects.all()
+        context = {'nalog':nalog,'termini':termini}
+        return render(request, 'studserviceapp/BasedStudent.html', context)
+
+def raspored_nastave(request,username):
+    t = Termin.objects.all()
+    nalog = Nalog.objects.get(username=username)
+    context = {'nalog': nalog, 'termini': t}
+    return render(request, 'studserviceapp/raspored_nastave.html', context)

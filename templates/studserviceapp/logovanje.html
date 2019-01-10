@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <!-- #{% load staticfiles %}# -->
+    {% load bootstrap4 %}
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+</head>
+<body>
+    <form action="{% url 'pomocna' %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="container">
+            <h2>Login</h2>
+            <form>
+                <div class="from-group">
+                    <label for="nalog">Nalog</label><br>
+                    <textarea class="form-control" id="nalog" name="nalog" rows="1" style="width: auto" placeholder="Unesite nalog"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="pwd">Password</label>
+                    <input type="password" class="form-control" id="pwd" placeholder="Unesite sifru" style="width: auto">
+                </div>
+                <button type="submit" class="btn btn-default">Login</button>
+            </form>
+        </div>
+    </form>
+
+</body>
+</html>

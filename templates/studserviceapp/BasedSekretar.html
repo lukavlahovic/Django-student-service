@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Studapp</title>
+    <!-- #{% load staticfiles %}# -->
+    {% load bootstrap4 %}
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+</head>
+<body>
+    <textarea cols="1" rows="10" name="nalog" style="display:none;">{{ nalog.username }}</textarea>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <a class="navbar-brand" href="#">Navbar</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item active">
+            <a class="nav-link" href="{% url 'pocetni_ekran' nalog.username %}">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'unosobavestenja' nalog.username %}">Unos obavestenja</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'prikazpredmeta' nalog.username %}">Prikaz izabranih grupa</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'slanje_mejla' nalog.username %}">Posalji mejl</a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+    {% block content %}
+    {% endblock %}
+</body>
+</html>

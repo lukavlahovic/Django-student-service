@@ -1,14 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Student info</title>
-</head>
-<body>
-
-
-             <img src="{{ student.slika.url }}" width="450" height="450"><br>
-
-
-</body>
-</html>
+{% extends 'studserviceapp/BasedNastavnik.html' %}
+{% block content %}
+    <img src="{{ student.slika.url }}" width="450" height="450"><br>
+{% endblock %}
