@@ -1,0 +1,29 @@
+{% extends 'studserviceapp/BasedNastavnik.html' %}
+{% block content %}
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Ucionica</th>
+                <th scope="col">Pocetak</th>
+                <th scope="col">Zavrsetak</th>
+                <th scope="col">Dan</th>
+                <th scope="col">Tip nastave</th>
+                <th scope="col">Nastavnik</th>
+                <th scope="col">Predmet</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for termin in termini%}
+                <tr>
+                    <td>{{ termin.oznaka_ucionice }}</td>
+                    <td>{{ termin.pocetak }}</td>
+                    <td>{{ termin.zavrsetak }}</td>
+                    <td>{{ termin.dan }}</td>
+                    <td>{{ termin.tip_nastave }}</td>
+                    <td>{{ termin.nastavnik.ime }} {{ termin.nastavnik.prezime }}</td>
+                    <td>{{ termin.predmet }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

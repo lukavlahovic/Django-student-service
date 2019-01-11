@@ -1,0 +1,17 @@
+{% extends 'studserviceapp/BasedSekretar.html' %}
+{% block content %}
+
+    <table>
+        <tbody>
+
+
+            {% for g in lista %}
+                <tr>
+                    <td><a href="{% url 'ispisTrenutnihGrupa' nalog.username g.id%}">{{g.oznaka_grupe}}</a></td>
+                </tr>
+             {% endfor %}
+
+
+        </tbody>
+    </table>
+{% endblock %}

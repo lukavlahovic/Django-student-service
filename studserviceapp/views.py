@@ -224,11 +224,21 @@ def sacuvajIzborGrupe(request):
 
     return HttpResponse("sacuvano")
 
-def ispisGrupa(request):
-
+def ispisGrupa(request, username):
+    nalog = Nalog.objects.get(username=username)
     izbornagrupa = IzbornaGrupa.objects.all()
-    context = {'izbornagrupa':izbornagrupa}
+    context = {'izbornagrupa':izbornagrupa,'nalog':nalog}
     return render(request, 'studserviceapp/ispisGrupa.html',
+                  context)
+
+def ispisTrenutnihGrupa(request,username,grupaID):
+    nalog = Nalog.objects.get(username=username)
+    grupa = Grupa.objects.get(id=grupaID)
+    studenti = Student.objects.all().filter(grupa=grupa)
+
+
+    context = {'studenti': studenti,'nalog':nalog}
+    return render(request, 'studserviceapp/ispisStudentaSaSlikomSek.html',
                   context)
 
 def ispisGrupaID(request,grupaID):
@@ -260,16 +270,17 @@ def savesliku(request):
     student = Student.objects.get(nalog=nalog)
     student.slika = slika
     student.save()
-    return HttpResponse("radi")
+    context = {'nalog': nalog}
+    return render(request,'studserviceapp/uploadovanaSlika.html' ,context)
 
 def predmeti_profesor(request, username):
     nalog = Nalog.objects.get(username=username)
-    nastavnik = Nastavnik.objects.get(nalog=nalog)
 
-    termini = Termin.objects.all().filter(nastavnik=nastavnik)
-    recnik = {}
-
-    for t in termini:
+    if nalog.uloga == 'nastavnik':
+     nastavnik = Nastavnik.objects.get(nalog=nalog)
+     termini = Termin.objects.all().filter(nastavnik=nastavnik)
+     recnik = {}
+     for t in termini:
         p = t.predmet
         lista = []
         if recnik.get(p.naziv) is None:
@@ -281,9 +292,14 @@ def predmeti_profesor(request, username):
                 lista.append(g)
 
         recnik.setdefault(p.naziv, lista)
-
-    context = {'nalog':nalog,'nastavnik': nastavnik, 'recnik': recnik}
-    return render(request, 'studserviceapp/predmetiProfesor.html', context)
+     context = {'nalog':nalog,'nastavnik': nastavnik, 'recnik': recnik}
+     return render(request, 'studserviceapp/predmetiProfesor.html', context)
+    elif nalog.uloga == 'sekretar':
+        lista = []
+        for g in Grupa.objects.all():
+            lista.append(g)
+        context = {'nalog': nalog, 'lista':lista}
+        return render(request, 'studserviceapp/pregledStudenata.html', context)
 
 def grupe_sa_slikama(request,username,grupaID):
     nalog = Nalog.objects.get(username=username)
@@ -298,9 +314,12 @@ def prikaz_slike(request,username,studentID):
     nalog = Nalog.objects.get(username=username)
     student = Student.objects.get(id=studentID)
     context = {'nalog':nalog,'student': student}
-    return render(request, 'studserviceapp/prikazslike.html',
-                  context)
-
+    if nalog.uloga=='nastavnik':
+        return render(request, 'studserviceapp/prikazslike.html',
+                      context)
+    elif nalog.uloga=='sekretar':
+        return render(request, 'studserviceapp/prikazslikeSek.html',
+                      context)
 def upload_kolokvijum(request):
     return render(request,'studserviceapp/uploadKolokvijum.html')
 
@@ -386,7 +405,7 @@ def slanje_mejla(request,username):
                     continue
                 smerovi.append(g.smer)
     context = {'nalog':nalog,'predmeti':predmeti,'grupe':lista1,'smerovi':smerovi}
-    return render(request, 'studserviceapp/slanjeMejla.html',context)
+    return render(request, 'studserviceapp/slanjeMejlaSek.html',context)
 
 def posalji_mejl(request):
     nalog_str = request.POST['nalog']
@@ -499,4 +518,7 @@ def raspored_nastave(request,username):
     t = Termin.objects.all()
     nalog = Nalog.objects.get(username=username)
     context = {'nalog': nalog, 'termini': t}
-    return render(request, 'studserviceapp/raspored_nastave.html', context)
+    if nalog.uloga=='student':
+        return render(request, 'studserviceapp/raspored_nastave.html', context)
+    elif nalog.uloga=='nastavnik':
+        return render(request, 'studserviceapp/rasporedNastaveNastavnik.html', context)
