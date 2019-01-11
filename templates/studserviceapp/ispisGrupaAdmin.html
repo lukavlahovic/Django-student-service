@@ -1,0 +1,17 @@
+{% extends 'studserviceapp/BasedAdmin.html' %}
+{% block content %}
+    <table>
+        <thead>
+           <tr>
+               <th>Grupe</th>
+           </tr>
+        </thead>
+        <tbody>
+        {%  for g in izbornagrupa %}
+            <tr>
+            <td><a href="{% url 'ispisgrupaID' g.id %}">{{g.oznaka_grupe}}</a></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+   </table>
+{% endblock %}

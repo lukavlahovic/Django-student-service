@@ -74,13 +74,13 @@ def save_obavestenje(request):
     obavestenje.save()
     return HttpResponse('<h1>Obavestenje sačuvano</h1>')
 
-def izborna_grupa_form(request):
-
+def izborna_grupa_form(request,username):
+    nalog = Nalog.objects.get(username=username)
     qs = Predmet.objects.all()
-    context = { 'predmeti' : qs}
+    context = { 'predmeti' : qs, 'nalog':nalog}
     return render(request, 'studserviceapp/izbornaGrupa.html', context)
 
-def saveizbornagrupa(request):
+def saveizbornagrupa(request, username):
     
     vrsta = request.POST['vrsta']
     skolska_godina_pocetak = request.POST['skolska_godina_pocetak']
@@ -108,7 +108,7 @@ def saveizbornagrupa(request):
     izbornaGrupa.save()
 
 
-    return izborna_grupa_form(request)
+    return izborna_grupa_form(request, username)
 
 
 def izmenaIzborneGrupe(request, oznakaGrupe):
@@ -196,9 +196,9 @@ def izborGrupe(request, studentUserName):
         return HttpResponse('Nalog ne postoji')
 
 
-def sacuvajIzborGrupe(request):
+def sacuvajIzborGrupe(request, username):
 
-
+    nalog = Nalog.objects.get(username=username)
     ostvarenoESPB = request.POST['ostvarenoESPB']
     upisujeESPB = request.POST['upisujeESPB']
     broj_polozenih_ispita = request.POST['broj_polozenih_ispita']
@@ -222,13 +222,19 @@ def sacuvajIzborGrupe(request):
         p = Predmet.objects.get(id=predmet)
         izborgrupe.nepolozeni_predmeti.add(p)
 
-    return HttpResponse("sacuvano")
+    context = {'nalog': nalog
+               }
+    return render(request, 'studserviceapp/savucanIzborGrupe.html',
+                  context)
 
 def ispisGrupa(request, username):
     nalog = Nalog.objects.get(username=username)
     izbornagrupa = IzbornaGrupa.objects.all()
     context = {'izbornagrupa':izbornagrupa,'nalog':nalog}
-    return render(request, 'studserviceapp/ispisGrupa.html',
+    if nalog.uloga=='sekretar':
+        return render(request, 'studserviceapp/ispisGrupa.html',
+                      context)
+    return render(request, 'studserviceapp/ispisGrupaAdmin.html',
                   context)
 
 def ispisTrenutnihGrupa(request,username,grupaID):

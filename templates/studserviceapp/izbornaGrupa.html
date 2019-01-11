@@ -1,7 +1,7 @@
 {% extends 'studserviceapp/BasedAdmin.html' %}
 {% block content %}
 
-    <form action="{% url 'saveizbornagrupa' %}" method="post">
+    <form action="{% url 'saveizbornagrupa' nalog.username %}" method="post">
         {% csrf_token %}
 
         <label>Izbor parnosti</label>

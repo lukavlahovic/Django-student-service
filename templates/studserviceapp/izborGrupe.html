@@ -1,6 +1,6 @@
 {% extends 'studserviceapp/BasedStudent.html' %}
 {% block content %}
-    <form action="{% url 'sacuvajizborgrupe'%}" method="post">
+    <form action="{% url 'sacuvajizborgrupe' nalog.username%}" method="post">
         {% csrf_token %}
 
         <textarea cols="1" rows="10" name="studentID" style="display:none; "> {{ student.id }}</textarea>
