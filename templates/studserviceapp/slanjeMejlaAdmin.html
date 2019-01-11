@@ -1,0 +1,48 @@
+{% extends 'studserviceapp/BasedAdmin.html' %}
+{% block content %}
+    <form action="{% url 'posalji_mejl' %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <textarea cols="1" rows="10" name="nalog" style="display:none; ">{{ nalog.username }}</textarea>
+        {% if nalog.uloga == 'nastavnik' %}
+            <textarea disabled rows="1" cols="30" name="nastavnik_ime">{{ nastavnik.ime }} {{ nastavnik.prezime }}</textarea><br>
+            <textarea disabled rows="1" cols="30" name="username">{{ nastavnik.nalog.username }}@raf.rs</textarea><br>
+        {% else %}
+            <textarea disabled rows="1" cols="30" name="username1">{{ nalog.username }}@raf.rs</textarea><br>
+        {% endif %}
+        <label>Naslov</label>
+        <textarea rows="1" cols="20" name="naslov"></textarea><br>
+        <label>Tekst</label>
+        <textarea rows="10" cols="50" name="tekst"></textarea><br>
+        <label>Attach</label>
+        <input id="attach" type="file" name="attach">
+        {% if nalog.uloga == 'nastavnik' %}
+            <select name="izbor" multiple>
+
+            {% for p in predmeti %}
+                <option value="{{ p.naziv }}" >{{ p }}</option>
+            {% endfor %}
+
+            {% for g in grupe %}
+                <option value="{{ g.oznaka_grupe }}" >{{ g.oznaka_grupe }}</option>
+            {% endfor %}
+
+            </select>
+        {% endif %}
+        {% if nalog.uloga == 'sekretar' or nalog.uloga == 'administrator'%}
+            <select name="izbor">
+                <option value="svi">Svi</option>
+                {% for s in smerovi %}
+                    <option value="{{ s }}">{{ s }}</option>
+                {% endfor %}
+                {% for p in predmeti %}
+                    <option value="{{ p.naziv }}">{{ p }}</option>
+                {% endfor %}
+                {% for g in grupe %}
+                    <option value="{{ g.oznaka_grupe }}">{{ g.oznaka_grupe }}</option>
+                {% endfor %}
+            </select>
+        {% endif %}
+        <input type="submit" value="Posalji mejl">
+    </form>
+{% endblock %}

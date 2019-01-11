@@ -1,10 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Add izborna grupa</title>
-</head>
-<body>
+{% extends 'studserviceapp/BasedAdmin.html' %}
+{% block content %}
 
     <form action="{% url 'saveizbornagrupa' %}" method="post">
         {% csrf_token %}
@@ -43,6 +38,4 @@
 
         <input type="submit" value="Snimi i dodaj novu">
     </form>
-
-</body>
-</html>
+{% endblock %}

@@ -6,8 +6,7 @@ from studserviceapp.models import Student, Grupa, Semestar, Nalog,IzborGrupe
 
 IzborGrupe.objects.all().delete()
 Student.objects.all().delete()
-Nalog.objects.get(username='lvlahovic16', lozinka='44387294', uloga='student').delete()
-Nalog.objects.get(username='mmitrovic16', lozinka='204921', uloga='student').delete()
+##Nalog.objects.get(username='mmitrovic16', lozinka='204921', uloga='student').delete()
 Nalog.objects.get(username='l_jelic17', lozinka='57788249', uloga='student').delete()
 Nalog.objects.get(username='a_petrovic17', lozinka='16464863', uloga='student').delete()
 

@@ -238,7 +238,11 @@ def ispisTrenutnihGrupa(request,username,grupaID):
 
 
     context = {'studenti': studenti,'nalog':nalog}
-    return render(request, 'studserviceapp/ispisStudentaSaSlikomSek.html',
+    if nalog.uloga=='sekretar':
+        return render(request, 'studserviceapp/ispisStudentaSaSlikomSek.html',
+                  context)
+
+    return render(request, 'studserviceapp/ispisStudentaSaSlikomAdmin.html',
                   context)
 
 def ispisGrupaID(request,grupaID):
@@ -300,6 +304,13 @@ def predmeti_profesor(request, username):
             lista.append(g)
         context = {'nalog': nalog, 'lista':lista}
         return render(request, 'studserviceapp/pregledStudenata.html', context)
+    elif nalog.uloga == 'administrator':
+        lista = []
+        for g in Grupa.objects.all():
+            lista.append(g)
+        context = {'nalog': nalog, 'lista':lista}
+        return render(request, 'studserviceapp/pregledStudentaAdmin.html', context)
+
 
 def grupe_sa_slikama(request,username,grupaID):
     nalog = Nalog.objects.get(username=username)
@@ -320,6 +331,10 @@ def prikaz_slike(request,username,studentID):
     elif nalog.uloga=='sekretar':
         return render(request, 'studserviceapp/prikazslikeSek.html',
                       context)
+    return render(request, 'studserviceapp/prikazSlikeAdmin.html',
+                  context)
+
+
 def upload_kolokvijum(request):
     return render(request,'studserviceapp/uploadKolokvijum.html')
 
@@ -391,7 +406,7 @@ def slanje_mejla(request,username):
 
         return render(request,'studserviceapp/slanjeMejla.html',context)
 
-    elif nalog.uloga == 'sekretar' or nalog.uloga == 'administrator':
+    elif nalog.uloga == 'sekretar':
         predmeti = Predmet.objects.all()
         termini = Termin.objects.all()
         lista1 = []
@@ -404,8 +419,23 @@ def slanje_mejla(request,username):
                 if g.smer in smerovi:
                     continue
                 smerovi.append(g.smer)
-    context = {'nalog':nalog,'predmeti':predmeti,'grupe':lista1,'smerovi':smerovi}
-    return render(request, 'studserviceapp/slanjeMejlaSek.html',context)
+        context = {'nalog':nalog,'predmeti':predmeti,'grupe':lista1,'smerovi':smerovi}
+        return render(request, 'studserviceapp/slanjeMejlaSek.html',context)
+    elif nalog.uloga == 'administrator':
+        predmeti = Predmet.objects.all()
+        termini = Termin.objects.all()
+        lista1 = []
+        smerovi = []
+        for t in termini:
+            for g in t.grupe.all():
+                if g in lista1:
+                    continue
+                lista1.append(g)
+                if g.smer in smerovi:
+                    continue
+                smerovi.append(g.smer)
+        context = {'nalog': nalog, 'predmeti': predmeti, 'grupe': lista1, 'smerovi': smerovi}
+        return render(request, 'studserviceapp/slanjeMejlaAdmin.html', context)
 
 def posalji_mejl(request):
     nalog_str = request.POST['nalog']
@@ -512,7 +542,7 @@ def pocetni_ekran(request,username):
     else:
         termini = Termin.objects.all()
         context = {'nalog':nalog,'termini':termini}
-        return render(request, 'studserviceapp/BasedStudent.html', context)
+        return render(request, 'studserviceapp/pocetniEkranAdmin.html', context)
 
 def raspored_nastave(request,username):
     t = Termin.objects.all()
