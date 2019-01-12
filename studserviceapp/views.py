@@ -58,10 +58,12 @@ def nastavnici_template(request):
 def unos_obavestenja_form(request,user):
     try:
         n = Nalog.objects.get(username = user)
-        if n.uloga=='sekretar' or n.uloga=='administrator':
-            context = {'nalog':n}
+        context = {'nalog': n}
+        if n.uloga=='sekretar':
             return render(request, 'studserviceapp/unosobavestenja.html',
                           context)
+        elif n.uloga=='administrator':
+            return render(request, 'studserviceapp/unosobavestenjaAdmin.html',context)
         else: return HttpResponse('<h1>Korisnik mora biti sekretar ili administrator</h1>')
     except Nalog.DoesNotExist:
         return HttpResponse('<h1>Username '+ user+' not found</h1>')
@@ -341,8 +343,11 @@ def prikaz_slike(request,username,studentID):
                   context)
 
 
-def upload_kolokvijum(request):
-    return render(request,'studserviceapp/uploadKolokvijum.html')
+def upload_kolokvijum(request,username):
+    nalog = Nalog.objects.get(username=username)
+    context = {'nalog': nalog}
+    return render(request, 'studserviceapp/uploadKolokvijum.html', context)
+
 
 def savekolokvijum(request):
     kolokvijumska_nedelja = request.POST['kolokvijum']
@@ -359,14 +364,16 @@ def savekolokvijum(request):
     context = {'greska':recnik,'podaci':greske[1],'kolokvijumska_nedelja':kolokvijumska_nedelja}
     return render(request,'studserviceapp/prikazGresaka.html',context)
 
-def izmenicu_sam(request):
+def izmenicu_sam(request,username):
+    nalog = Nalog.objects.get(username=username)
     kolokvijumska_nedelja = request.POST['kolokvijumska_nedelja']
     print(kolokvijumska_nedelja)
     rp = RasporedPolaganja.objects.get(kolokvijumska_nedelja=kolokvijumska_nedelja)
     for t in TerminPolaganja.objects.all().filter(raspored_polaganja=rp):
         t.delete()
     rp.delete()
-    return render(request,'studserviceapp/uploadKolokvijum.html')
+    context = {'nalog':nalog}
+    return render(request,'studserviceapp/uploadKolokvijum.html',context)
 
 def forma_ispravak(request,broj_reda):
     podaci = request.POST.getlist("podaci")
@@ -527,27 +534,29 @@ def pocetni_ekran(request,username):
     except:
         return HttpResponse("Nalog ne postoji")
 
+    zadnjih_petObv = Obavestenje.objects.all().order_by('-id')[:5]
+
     if nalog.uloga == "student":
         s = Student.objects.get(nalog=nalog)
         g = Grupa.objects.get(student=s)
 
         t = Termin.objects.all().filter(grupe=g)
-        context = {'nalog':nalog,'termini':t}
+        context = {'nalog':nalog,'termini':t,'obv':zadnjih_petObv}
         return render(request, 'studserviceapp/pocetniEkranStudent.html', context)
 
     elif nalog.uloga == "nastavnik":
         s = Termin.objects.all().filter(nastavnik=Nastavnik.objects.get(nalog=nalog))
-        context = {'nalog':nalog,'termini':s}
+        context = {'nalog':nalog,'termini':s,'obv':zadnjih_petObv}
         return render(request, 'studserviceapp/pocetniEkranNastavnik.html', context)
 
     elif nalog.uloga == "sekretar":
         termini = Termin.objects.all()
-        context = {'nalog': nalog,'termini':termini}
+        context = {'nalog': nalog,'termini':termini,'obv':zadnjih_petObv}
         return render(request, 'studserviceapp/pocetniEkranSekretar.html', context)
 
     else:
         termini = Termin.objects.all()
-        context = {'nalog':nalog,'termini':termini}
+        context = {'nalog':nalog,'termini':termini,'obv':zadnjih_petObv}
         return render(request, 'studserviceapp/pocetniEkranAdmin.html', context)
 
 def raspored_nastave(request,username):
@@ -558,3 +567,15 @@ def raspored_nastave(request,username):
         return render(request, 'studserviceapp/raspored_nastave.html', context)
     elif nalog.uloga=='nastavnik':
         return render(request, 'studserviceapp/rasporedNastaveNastavnik.html', context)
+
+def upload_raspored(request,username):
+    nalog = Nalog.objects.get(username=username)
+    context = {'nalog':nalog}
+    return render(request, 'studserviceapp/uploadRaspored.html',context)
+
+def save_raspored(request,username):
+    nalog = Nalog.objects.get(username=username)
+    file_path = request.FILES['fajl_raspored']
+    file_data = file_path.read().decode("utf-8")
+    parseCSV.import_timetable_from_csv(file_data)
+    return HttpResponse("Raspored dodat u bazu")

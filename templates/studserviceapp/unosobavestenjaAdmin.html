@@ -1,0 +1,13 @@
+{% extends 'studserviceapp/BasedAdmin.html' %}
+{% block content %}
+    <form action="{% url 'saveobavestenje' %}" method="post">
+        {% csrf_token %}
+        <label>Tekst obaveštenja</label><br>
+        <textarea rows="4" cols="50" name="tekst"></textarea><br><br>
+        <label>Obaveštenje postavio</label>
+        <input name="postavio" value="{{ nalog.username }}"
+readonly="readonly"/><br><br>
+
+        <input type="submit" value="Snimi">
+    </form>
+{% endblock %}

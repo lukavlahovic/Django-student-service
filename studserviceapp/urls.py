@@ -21,7 +21,7 @@ urlpatterns = [
     path('prikazpredmeta/<str:username>', views.predmeti_profesor, name='prikazpredmeta'),
     path('prikazgrupe/<str:username>/<str:grupaID>', views.grupe_sa_slikama, name='prikazgrupe'),
     path('prikazslike/<str:username>/<str:studentID>', views.prikaz_slike, name='prikazslike'),
-    path("uploadkolokvijum", views.upload_kolokvijum, name='uploadkolokvijum'),
+    path('uploadkolokvijum/<str:username>', views.upload_kolokvijum, name='uploadkolokvijum'),
     path('savekolokvijum', views.savekolokvijum, name='savekolokvijum'),
     path('izmenicu_sam', views.izmenicu_sam, name='izmenicu_sam'),
     path('forma_ispravak/<str:broj_reda>', views.forma_ispravak, name='forma_ispravak'),
@@ -31,4 +31,6 @@ urlpatterns = [
     path('pomocna', views.pomocna, name='pomocna'),
     path('pocetni_ekran/<str:username>', views.pocetni_ekran, name='pocetni_ekran'),
     path('raspored_nastave/<str:username>', views.raspored_nastave, name='raspored_nastave'),
+    path('uploadraspored/<str:username>', views.upload_raspored, name='uploadraspored'),
+    path('saveraspored', views.save_raspored, name='saveraspored'),
 ]

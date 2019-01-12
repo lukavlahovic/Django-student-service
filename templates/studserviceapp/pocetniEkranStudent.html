@@ -1,6 +1,26 @@
 {% extends 'studserviceapp/BasedStudent.html' %}
 {% block content %}
-    <table class="table">
+    <table id="obavestenje" class="table table-hover table-dark" >
+      <thead>
+        <tr>
+          <th scope="col">Datum postavljanja</th>
+          <th scope="col">Tekst</th>
+          <th scope="col">File</th>
+          <th scope="col">Postavio</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for o in obv %}
+          <tr>
+              <td>{{ o.datum_postavljanja }}</td>
+              <td>{{ o.tekst }}</td>
+              <td>{{ o.fajl }}</td>
+              <td>{{ o.postavio.username }}</td>
+          </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    <table id="raspored" class="table">
         <thead>
             <tr>
                 <th scope="col">Ucionica</th>
@@ -10,6 +30,7 @@
                 <th scope="col">Tip nastave</th>
                 <th scope="col">Nastavnik</th>
                 <th scope="col">Predmet</th>
+                <th><input id="myInput" class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" onkeyup="myFunction()"></th>
             </tr>
         </thead>
         <tbody>
@@ -26,6 +47,74 @@
             {% endfor %}
         </tbody>
     </table>
+    <script>
+        function myFunction() {
+            var input, filter, table, tr, td, i, txtValue;
+            input = document.getElementById("myInput");
+            filter = input.value.toUpperCase();
+            table = document.getElementById("raspored");
+            tr = table.getElementsByTagName("tr");
+            for (i = 0; i < tr.length; i++) {
+                td = tr[i].getElementsByTagName("td")[0];
+                td1 = tr[i].getElementsByTagName("td")[1];
+                td2 = tr[i].getElementsByTagName("td")[2];
+                td3 = tr[i].getElementsByTagName("td")[3];
+                td4 = tr[i].getElementsByTagName("td")[4];
+                td5 = tr[i].getElementsByTagName("td")[5];
+                td6 = tr[i].getElementsByTagName("td")[6];
+                if (td) {
+                    txtValue = td.textContent || td.innerText;
+                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                        tr[i].style.display = "";
+                    } else {
+                        if (td1) {
+                            txtValue = td1.textContent || td1.innerText;
+                            if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                                tr[i].style.display = "";
+                            } else {
+                                if (td2) {
+                                    txtValue = td2.textContent || td2.innerText;
+                                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                                        tr[i].style.display = "";
+                                    } else {
+                                        if (td3) {
+                                            txtValue = td3.textContent || td3.innerText;
+                                            if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                                                tr[i].style.display = "";
+                                            } else {
+                                                if (td4) {
+                                                    txtValue = td4.textContent || td4.innerText;
+                                                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                                                        tr[i].style.display = "";
+                                                    } else {
+                                                        if (td5) {
+                                                            txtValue = td5.textContent || td5.innerText;
+                                                            if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                                                                tr[i].style.display = "";
+                                                            } else {
+                                                                if (td6) {
+                                                                    txtValue = td6.textContent || td6.innerText;
+                                                                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                                                                        tr[i].style.display = "";
+                                                                    } else {
+                                                                        tr[i].style.display = "none";
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
 {% endblock %}
 
 

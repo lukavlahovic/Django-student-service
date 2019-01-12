@@ -1,17 +1,54 @@
 {% extends 'studserviceapp/BasedAdmin.html' %}
 {% block content %}
-
-    <table>
+    <table id="raspored" class="table" style="width: 300px">
+        <thead>
+            <tr>
+                <th><input id="myInput" class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" onkeyup="myFunction()" style="width: 200px"></th>
+            </tr>
+        </thead>
         <tbody>
-
-
             {% for g in lista %}
                 <tr>
                     <td><a href="{% url 'ispisTrenutnihGrupa' nalog.username g.id%}">{{g.oznaka_grupe}}</a></td>
                 </tr>
              {% endfor %}
-
-
         </tbody>
     </table>
+    <script>
+        function myFunction() {
+            var input, filter, table, tr, td, i, txtValue;
+            input = document.getElementById("myInput");
+            filter = input.value.toUpperCase();
+            table = document.getElementById("raspored");
+            tr = table.getElementsByTagName("tr");
+            for (i = 0; i < tr.length; i++) {
+                td = tr[i].getElementsByTagName("td")[0];
+                if (td) {
+                    txtValue = td.textContent || td.innerText;
+                    if('0123456789'.indexOf(filter) !== -1){
+                         if (txtValue[0].toUpperCase().indexOf(filter) > -1) {
+                            tr[i].style.display = "";
+                        } else {
+                            tr[i].style.display = "none";
+                        }
+                    }else {
+                        var k=1;
+                        {% for g in izbornagrupa %}
+                            if (k==i) {
+                                var x = "{{ g.smer }}";
+                            }
+                            k++;
+                            //console.log("{{ g.smer }}");
+                        {% endfor %}
+                        console.log(x);
+                        if(x.toUpperCase().indexOf(filter)>-1){
+                            tr[i].style.display = "";
+                        }else {
+                            tr[i].style.display = "none";
+                        }
+                    }
+                }
+            }
+        }
+    </script>
 {% endblock %}

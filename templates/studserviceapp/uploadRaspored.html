@@ -1,0 +1,9 @@
+{% extends 'studserviceapp/BasedAdmin.html' %}
+{% block content %}
+    <form action="{% url 'saveraspored' %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <label>Izaberite fajl</label><br>
+        <input name="fajl_raspored" type="file" id="fajl_raspored">
+        <input type="submit" value="Snimi">
+    </form>
+{% endblock %}
