@@ -27,15 +27,15 @@
 
         <label>Semestar</label>
          {%  if semestar.vrsta == 'parni' %}
-             <input type="radio" name="upisuje_semestar" value={{ 2 }}> 2
-             <input type="radio" name="upisuje_semestar" value={{ 4 }}> 4
-             <input type="radio" name="upisuje_semestar" value={{ 6 }}> 6
-             <input type="radio" name="upisuje_semestar" value={{ 8 }}> 8<br><br>
+             <input type="radio" name="upisuje_semestar" id="us1" value={{ 2 }}> 2
+             <input type="radio" name="upisuje_semestar" id="us2" value={{ 4 }}> 4
+             <input type="radio" name="upisuje_semestar" id="us3" value={{ 6 }}> 6
+             <input type="radio" name="upisuje_semestar" id="us4" value={{ 8 }}> 8<br><br>
         {% else %}
-             <input type="radio" name="upisuje_semestar" value={{ 1 }}> 1
-             <input type="radio" name="upisuje_semestar" value={{ 3 }}> 3
-             <input type="radio" name="upisuje_semestar" value={{ 5 }}> 5
-             <input type="radio" name="upisuje_semestar" value={{ 7 }}> 7<br><br>
+             <input type="radio" name="upisuje_semestar" id="us1" value={{ 1 }}> 1
+             <input type="radio" name="upisuje_semestar" id="us2" value={{ 3 }}> 3
+             <input type="radio" name="upisuje_semestar" id="us3" value={{ 5 }}> 5
+             <input type="radio" name="upisuje_semestar" id="us4" value={{ 7 }}> 7<br><br>
         {% endif %}
 
         <label>Prvi put upisuje</label>
@@ -43,7 +43,7 @@
         <input type="radio" name="prvi_put_upisuje_semestar" value=False> NE<br><br>
 
         <label>Grupa koju student bira</label>
-        <select name="izabrana_grupa">
+        <select name="izabrana_grupa" id="ig">
         {%  for g in lista %}
             <option value={{ g.id }} >{{ g.oznaka_grupe }}</option>
         {% endfor %}
@@ -64,4 +64,80 @@
 
         <input type="submit" value="Sacuvaj">
     </form>
+    <script>
+        $(function() {
+            if (document.getElementById('us1').checked) {
+  rate_value = document.getElementById('us1').value;
+}
+            if (document.getElementById('us2').checked) {
+  rate_value = document.getElementById('us2').value;
+}
+   if (document.getElementById('us3').checked) {
+  rate_value = document.getElementById('us3').value;
+}
+   if (document.getElementById('us4').checked) {
+  rate_value = document.getElementById('us4').value;
+}
+
+  $('#ig').filterByText(rate_value);
+});
+
+
+    $(function(){
+    $("#us2").click(() => {
+  const val = $('input[name=upisuje_semestar]:checked').val();
+  $('#ig').filterByText(val);
+});
+ });
+        $(function(){
+    $("#us3").click(() => {
+  const val = $('input[name=upisuje_semestar]:checked').val();
+  $('#ig').filterByText(val);
+});
+ });
+        $(function(){
+    $("#us4").click(() => {
+  const val = $('input[name=upisuje_semestar]:checked').val();
+  $('#ig').filterByText(val);
+});
+ });
+
+  jQuery.fn.filterByText = function(textbox) {
+  return this.each(function() {
+    var select = this;
+    var options = [];
+    var pomocna = 0;
+    $(select).find('option').each(function() {
+        var k=0;
+        {% for g in lista %}
+            if(k==pomocna) {
+                var semestar = "{{ g.za_semestar }}";
+            }
+            k++;
+        {% endfor %}
+      options.push({
+        value: $(this).val(),
+        text: $(this).text(),
+          s: semestar
+      });
+      pomocna++;
+    });
+    $(select).data('options', options);
+    $(textbox).bind('change', function() {
+      var options = $(select).empty().data('options');
+      var search = $.trim($(this).val());
+      var regex = new RegExp(search, "gi");
+
+      $.each(options, function(i) {
+        var option = options[i];
+        if (option.s.match(regex) !== null) {
+          $(select).append(
+            $('<option>').text(option.text).val(option.value)
+          );
+        }
+      });
+    });
+  });
+};
+    </script>
 {% endblock %}
