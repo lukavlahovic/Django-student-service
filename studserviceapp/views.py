@@ -87,7 +87,8 @@ def saveizbornagrupa(request, username):
     vrsta = request.POST['vrsta']
     skolska_godina_pocetak = request.POST['skolska_godina_pocetak']
     skolska_godina_kraj = request.POST['skolska_godina_kraj']
-    oznaka_semestra = request.POST['oznaka_semestra']
+    oznaka_semestra = request.POST.get('oznaka_semestra',None)
+    print(oznaka_semestra)
     oznaka_grupe = request.POST['oznaka_grupe']
     kapacitet = request.POST['kapacitet']
     smer = request.POST['smer']
@@ -101,13 +102,16 @@ def saveizbornagrupa(request, username):
         semestar = Semestar(vrsta=vrsta, skolska_godina_kraj=skolska_godina_kraj,skolska_godina_pocetak=skolska_godina_pocetak)
         semestar.save()
 
-    izbornaGrupa = IzbornaGrupa(oznaka_grupe=oznaka_grupe,kapacitet=kapacitet,oznaka_semestra=oznaka_semestra,smer=smer,aktivna=aktivna,za_semestar=semestar)
-    izbornaGrupa.save()
-    for predmet in predmeti:
-        p = Predmet.objects.get(id=predmet)
-        p.semestar_po_programu = oznaka_semestra
-        izbornaGrupa.predmeti.add(p)
-    izbornaGrupa.save()
+    listaP = oznaka_grupe.split(",")
+    print(listaP)
+    for pr in listaP:
+        izbornaGrupa = IzbornaGrupa(oznaka_grupe=pr,kapacitet=kapacitet,oznaka_semestra=oznaka_semestra,smer=smer,aktivna=aktivna,za_semestar=semestar)
+        izbornaGrupa.save()
+        for predmet in predmeti:
+            p = Predmet.objects.get(id=predmet)
+            p.semestar_po_programu = oznaka_semestra
+            izbornaGrupa.predmeti.add(p)
+        #izbornaGrupa.save()
 
 
     return izborna_grupa_form(request, username)
@@ -182,6 +186,8 @@ def izborGrupe(request, studentUserName):
             if ig.izabrana_grupa.za_semestar == semestar:
                 return HttpResponse('Ovaj nalog je vec izabrao grupu')
 
+        print(semestar)
+
         izbornagrupa = IzbornaGrupa.objects.filter(smer=s.smer,aktivna=True,za_semestar=semestar)
         p = Predmet.objects.all()
 
@@ -189,7 +195,6 @@ def izborGrupe(request, studentUserName):
         for g in izbornagrupa:
             if IzborGrupe.objects.filter(izabrana_grupa=g).count() < g.kapacitet:
                 lista.append(g)
-
         context = {'nalog':n,'student': s, 'semestar': semestar, 'izbornagrupa': izbornagrupa, 'lista': lista, 'predmeti':p}
         return render(request, 'studserviceapp/izborGrupe.html',
                           context)
@@ -579,3 +584,8 @@ def save_raspored(request,username):
     file_data = file_path.read().decode("utf-8")
     parseCSV.import_timetable_from_csv(file_data)
     return HttpResponse("Raspored dodat u bazu")
+
+def nadji_grupu(request,username):
+    nalog = Nalog.objects.get(username=username)
+    context = {'nalog':nalog}
+    return render(request, 'studserviceapp/')

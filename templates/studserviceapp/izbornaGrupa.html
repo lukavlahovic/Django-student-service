@@ -17,7 +17,7 @@
         <textarea rows="1" cols="10" name="skolska_godina_kraj"></textarea><br><br>
 
         <label>Oznaka semestra</label>
-        <textarea rows="1" cols="10" name="oznaka_semestra"></textarea><br><br>
+        <input name="oznaka_semestra" type="text" id="oznaka_semestra" style="width: 200px"><br><br>
 
         <label>Oznaka grupe</label>
         <textarea rows="1" cols="10" name="oznaka_grupe"></textarea><br><br>
@@ -30,7 +30,7 @@
 
         <input type="checkbox" name="aktivna" value=True> Aktivna<br>
 
-        <select name="predmeti" multiple>
+        <select id="predmeti" name="predmeti" multiple>
         {%  for p in predmeti %}
             <option value={{ p.id }} >{{ p }}</option>
         {% endfor %}
@@ -38,4 +38,49 @@
 
         <input type="submit" value="Snimi i dodaj novu">
     </form>
+    <script>
+        jQuery.fn.filterByText = function(textbox) {
+  return this.each(function() {
+    var select = this;
+    var options = [];
+    var pomocna = 0;
+    $(select).find('option').each(function() {
+        var k=0;
+        {% for p in predmeti %}
+            if(k==pomocna) {
+                var semestar = "{{ p.semestar_po_programu }}";
+            }
+            k++;
+        {% endfor %}
+      options.push({
+        value: $(this).val(),
+        text: $(this).text(),
+          s: semestar
+      });
+      pomocna++;
+    });
+    $(select).data('options', options);
+    $(textbox).bind('change keyup', function() {
+      var options = $(select).empty().data('options');
+      var search = $.trim($(this).val());
+      var regex = new RegExp(search, "gi");
+
+      $.each(options, function(i) {
+        var option = options[i];
+        if (option.s.match(regex) !== null) {
+          $(select).append(
+            $('<option>').text(option.text).val(option.value)
+          );
+        }
+      });
+    });
+  });
+};
+
+// You could use it like this:
+
+$(function() {
+  $('#predmeti').filterByText($('#oznaka_semestra'));
+});
+    </script>
 {% endblock %}

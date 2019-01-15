@@ -33,4 +33,5 @@ urlpatterns = [
     path('raspored_nastave/<str:username>', views.raspored_nastave, name='raspored_nastave'),
     path('uploadraspored/<str:username>', views.upload_raspored, name='uploadraspored'),
     path('saveraspored', views.save_raspored, name='saveraspored'),
+    path('nadji_grupu/<str:username>', views.nadji_grupu, name='nadji_grupu'),
 ]
