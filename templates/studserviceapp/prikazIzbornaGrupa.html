@@ -1,0 +1,91 @@
+{% extends 'studserviceapp/BasedAdmin.html' %}
+{% block content %}
+    <label>Unesite ime i prezime ili indeks studenta(indeks napisati npr RN22/2016)</label><br>
+    <textarea rows="1" cols="10" name="myInput" id="myInput"></textarea>
+    <button type="button" onclick="myFunction()">Pretrazi</button><br><br>
+
+    <label>Semestar</label>
+    <textarea rows="1" cols="10" name="semestar" id="semestar"></textarea><br><br>
+
+    <label>Izabrana grupa</label>
+    <textarea rows="1" cols="10" name="izabrana_grupa" id="izabrana_grupa"></textarea><br><br>
+
+    <label>Broj do sada ukupno ostvarenih ESPB</label>
+    <textarea rows="1" cols="10" name="ostvarenoESPB" id="ostvarenoESPB"></textarea><br><br>
+
+    <label>Broj ESPB koji se upisuje</label>
+    <textarea rows="1" cols="10" name="upisanoESPB" id="upisanoESPB"></textarea><br><br>
+
+    <label>Preneti predmeti</label>
+    <ul id="predmeti">
+    </ul>
+
+    <label>Nacin placanja</label>
+    <textarea rows="1" cols="10" name="nacin_placanja" id="nacin_placanja"></textarea><br><br>
+
+    <script>
+        function myFunction(){
+            brisanje();
+            input = document.getElementById("myInput");
+            filter = input.value;
+            imePrezime = filter.split(" ");
+            {% for s in studenti %}
+                if(imePrezime[0]==="{{ s.ime }}"&&imePrezime[1]==="{{ s.prezime }}"){
+                    {% for ig in izborne_grupe %}
+                        if(imePrezime[0]==="{{ ig.student.ime }}"&&imePrezime[1]==="{{ ig.student.prezime }}"){
+                            document.getElementById('semestar').innerHTML +="{{ ig.upisuje_semestar }}";
+                            document.getElementById('izabrana_grupa').innerHTML +="{{ ig.izabrana_grupa.oznaka_grupe }}";
+                            document.getElementById('ostvarenoESPB').innerHTML +="{{ ig.ostvarenoESPB }}";
+                            document.getElementById('upisanoESPB').innerHTML +="{{ ig.upisujeESPB }}";
+                            var predmeti = document.getElementById('predmeti');
+                            {% for p in ig.nepolozeni_predmeti.items %}
+                                var li = document.createElement("li");
+                                var tekst = document.createTextNode("{{ p }}");
+                                li.appendChild(tekst);
+                                predmeti.appendChild(li);
+                            {% endfor %}
+                            document.getElementById('nacin_placanja').innerHTML +="{{ ig.nacin_placanja }}";
+                        }
+                    {% endfor %}
+
+                }else{
+                    var indeks = filter.split("/");
+                    var smer = indeks[0].slice(0,2);
+                    var broj = indeks[0].slice(2);
+                    if(smer==="{{ s.smer }}"&&broj==="{{ s.broj_indeksa }}"&&indeks[1]==="{{ s.godina_upisa }}"){
+                        {% for ig in izborne_grupe %}
+                            if(smer==="{{ ig.student.smer }}"&&broj==="{{ ig.student.broj_indeksa }}"&&indeks[1]==="{{ ig.student.godina_upisa }}") {
+                                document.getElementById('semestar').innerHTML += "{{ ig.upisuje_semestar }}";
+                                document.getElementById('izabrana_grupa').innerHTML += "{{ ig.izabrana_grupa.oznaka_grupe }}";
+                                document.getElementById('ostvarenoESPB').innerHTML += "{{ ig.ostvarenoESPB }}";
+                                document.getElementById('upisanoESPB').innerHTML += "{{ ig.upisujeESPB }}";
+                                var predmeti = document.getElementById('predmeti');
+                                {% for p in ig.nepolozeni_predmeti.items %}
+                                    var li = document.createElement("li");
+                                    var tekst = document.createTextNode("{{ p }}");
+                                    li.appendChild(tekst);
+                                    predmeti.appendChild(li);
+                                {% endfor %}
+                                document.getElementById('nacin_placanja').innerHTML += "{{ ig.nacin_placanja }}";
+                            }
+                        {% endfor %}
+                    }
+                }
+            {% endfor %}
+        }
+        function brisanje() {
+            document.getElementById('semestar').innerHTML = "";
+            document.getElementById('izabrana_grupa').innerHTML = "";
+            document.getElementById('ostvarenoESPB').innerHTML = "";
+            document.getElementById('upisanoESPB').innerHTML = "";
+            var parent = document.getElementById('predmeti');
+            children = parent.children;
+            let i=0;
+            while(i<children.length){
+                parent.removeChild(children[i]);
+                i++;
+            }
+            document.getElementById('nacin_placanja').innerHTML = "";
+        }
+    </script>
+{% endblock %}

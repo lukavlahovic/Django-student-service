@@ -587,5 +587,7 @@ def save_raspored(request,username):
 
 def nadji_grupu(request,username):
     nalog = Nalog.objects.get(username=username)
-    context = {'nalog':nalog}
-    return render(request, 'studserviceapp/')
+    studenti = Student.objects.all()
+    izborne_grupe = IzborGrupe.objects.all()
+    context = {'nalog': nalog,'studenti':studenti,'izborne_grupe':izborne_grupe}
+    return render(request, 'studserviceapp/prikazIzbornaGrupa.html',context)
