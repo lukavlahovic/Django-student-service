@@ -50,7 +50,7 @@
         </select><br><br>
 
         <label>Nepolozeni predmeti iz prethodnih godina</label>
-        <select name="nepolozeni_predmeti" multiple>
+        <select name="nepolozeni_predmeti" id="nepolozeni_predmeti" multiple>
         {%  for p in predmeti %}
             <option value={{ p.id }} >{{ p }}</option>
         {% endfor %}
@@ -65,20 +65,58 @@
         <input type="submit" value="Sacuvaj">
     </form>
     <script>
-$(function(){
-
-    var select = $('#ig'),
-        options = select.find('option');
-
-    $('[type="radio"]').click(function(){
-        var visibleItems = options.filter('[value*="' + $(this).val()  + '"]').show();
-        options.not(visibleItems).hide();
-
-        if(visibleItems.length > 0)
-        {
-            select.val(visibleItems.eq(0).val());
-        }
+jQuery.fn.filterByText = function(textbox) {
+  return this.each(function() {
+    var select = this;
+    var options = [];
+    var pomocna = 0;
+    $(select).find('option').each(function() {
+        var k=0;
+        {% for g in lista %}
+            if(k==pomocna) {
+                var semestar = "{{ g.oznaka_semestra }}";
+            }
+            k++;
+        {% endfor %}
+      options.push({
+        value: $(this).val(),
+        text: $(this).text(),
+          s: semestar
+      });
+      pomocna++;
     });
+    $(select).data('options', options);
+    $(textbox).bind('change keyup', function() {
+      var options = $(select).empty().data('options');
+      var search = $.trim($(this).val());
+      var regex = new RegExp(search, "gi");
+
+
+      $.each(options, function(i) {
+        var option = options[i];
+        if (option.s.match(regex) !== null) {
+          $(select).append(
+            $('<option>').text(option.text).val(option.value)
+          );
+        }
+      });
+    });
+  });
+};
+
+
+
+$(function() {
+  $('#ig').filterByText($('#us1'));
+});
+$(function() {
+  $('#ig').filterByText($('#us2'));
+});
+$(function() {
+  $('#ig').filterByText($('#us3'));
+});
+$(function() {
+  $('#ig').filterByText($('#us4'));
 });
     </script>
 {% endblock %}
