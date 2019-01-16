@@ -65,79 +65,20 @@
         <input type="submit" value="Sacuvaj">
     </form>
     <script>
-        $(function() {
-            if (document.getElementById('us1').checked) {
-  rate_value = document.getElementById('us1').value;
-}
-            if (document.getElementById('us2').checked) {
-  rate_value = document.getElementById('us2').value;
-}
-   if (document.getElementById('us3').checked) {
-  rate_value = document.getElementById('us3').value;
-}
-   if (document.getElementById('us4').checked) {
-  rate_value = document.getElementById('us4').value;
-}
+$(function(){
 
-  $('#ig').filterByText(rate_value);
-});
+    var select = $('#ig'),
+        options = select.find('option');
 
+    $('[type="radio"]').click(function(){
+        var visibleItems = options.filter('[value*="' + $(this).val()  + '"]').show();
+        options.not(visibleItems).hide();
 
-    $(function(){
-    $("#us2").click(() => {
-  const val = $('input[name=upisuje_semestar]:checked').val();
-  $('#ig').filterByText(val);
-});
- });
-        $(function(){
-    $("#us3").click(() => {
-  const val = $('input[name=upisuje_semestar]:checked').val();
-  $('#ig').filterByText(val);
-});
- });
-        $(function(){
-    $("#us4").click(() => {
-  const val = $('input[name=upisuje_semestar]:checked').val();
-  $('#ig').filterByText(val);
-});
- });
-
-  jQuery.fn.filterByText = function(textbox) {
-  return this.each(function() {
-    var select = this;
-    var options = [];
-    var pomocna = 0;
-    $(select).find('option').each(function() {
-        var k=0;
-        {% for g in lista %}
-            if(k==pomocna) {
-                var semestar = "{{ g.za_semestar }}";
-            }
-            k++;
-        {% endfor %}
-      options.push({
-        value: $(this).val(),
-        text: $(this).text(),
-          s: semestar
-      });
-      pomocna++;
-    });
-    $(select).data('options', options);
-    $(textbox).bind('change', function() {
-      var options = $(select).empty().data('options');
-      var search = $.trim($(this).val());
-      var regex = new RegExp(search, "gi");
-
-      $.each(options, function(i) {
-        var option = options[i];
-        if (option.s.match(regex) !== null) {
-          $(select).append(
-            $('<option>').text(option.text).val(option.value)
-          );
+        if(visibleItems.length > 0)
+        {
+            select.val(visibleItems.eq(0).val());
         }
-      });
     });
-  });
-};
+});
     </script>
 {% endblock %}

@@ -38,9 +38,9 @@
                             document.getElementById('ostvarenoESPB').innerHTML +="{{ ig.ostvarenoESPB }}";
                             document.getElementById('upisanoESPB').innerHTML +="{{ ig.upisujeESPB }}";
                             var predmeti = document.getElementById('predmeti');
-                            {% for p in ig.nepolozeni_predmeti.items %}
+                            {% for p in ig.nepolozeni_predmeti.all %}
                                 var li = document.createElement("li");
-                                var tekst = document.createTextNode("{{ p }}");
+                                var tekst = document.createTextNode("{{ p.naziv }}");
                                 li.appendChild(tekst);
                                 predmeti.appendChild(li);
                             {% endfor %}
@@ -60,9 +60,10 @@
                                 document.getElementById('ostvarenoESPB').innerHTML += "{{ ig.ostvarenoESPB }}";
                                 document.getElementById('upisanoESPB').innerHTML += "{{ ig.upisujeESPB }}";
                                 var predmeti = document.getElementById('predmeti');
-                                {% for p in ig.nepolozeni_predmeti.items %}
+                                {% for p in ig.nepolozeni_predmeti.all %}
+                                    alert("{{ p.naziv }}");
                                     var li = document.createElement("li");
-                                    var tekst = document.createTextNode("{{ p }}");
+                                    var tekst = document.createTextNode("{{ p.naziv }}");
                                     li.appendChild(tekst);
                                     predmeti.appendChild(li);
                                 {% endfor %}
